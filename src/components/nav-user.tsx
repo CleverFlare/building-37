@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -25,6 +18,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  PasswordIcon,
+  PenIcon,
+  UserCircleIcon,
+} from "@phosphor-icons/react/dist/ssr";
 
 export function NavUser({
   user,
@@ -82,15 +80,15 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
+                <UserCircleIcon />
                 تغيير صورة الحساب
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
+                <PasswordIcon />
                 تغيير كلمة المرور
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
+                <PenIcon />
                 تعديل بيانات الحساب
               </DropdownMenuItem>
             </DropdownMenuGroup>

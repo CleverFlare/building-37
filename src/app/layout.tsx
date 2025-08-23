@@ -7,6 +7,8 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { DirectionProvider } from "@/components/direction-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+
 export const metadata: Metadata = {
   title: "37 Building System",
   description: "A system design for all 37 building needs.",
@@ -29,16 +31,18 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <DirectionProvider dir="rtl">
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-          </DirectionProvider>
-        </ThemeProvider>
+        <NuqsAdapter>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <DirectionProvider dir="rtl">
+              <TRPCReactProvider>{children}</TRPCReactProvider>
+            </DirectionProvider>
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

@@ -9,3 +9,13 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model Apartment {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  apartmentNumber Int
+  ownerName       String
+  occupantName    String?
+  isRented        Boolean
+  createdAt       DateTime @default(now())
+  updateAt        DateTime @updatedAt
+}
