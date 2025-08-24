@@ -1,4 +1,5 @@
 import type { dataTableConfig } from "@/config/data-table";
+import { prismaFiltersConfig } from "@/config/prisma-filters";
 
 type Filter = {
   id: string;
@@ -14,76 +15,15 @@ export function filtersToPrismaWhere<T>(
   // Replace `UserWhereInput` with your actual Prisma model input type
   const conditions: Record<string, unknown>[] = [];
 
-  for (const { id, operator, value } of filters) {
-    let clause: Record<string, unknown> = {};
+  for (const { id, operator, variant, value } of filters) {
+    const variantConfig = prismaFiltersConfig[variant];
 
-    switch (operator) {
-      /** ─────────────── TEXT ─────────────── */
-      case "iLike":
-        clause = { [id]: { contains: value, mode: "insensitive" } };
-        break;
-      case "notILike":
-        clause = { [id]: { NOT: { contains: value, mode: "insensitive" } } };
-        break;
+    const typedValue = variantConfig.transformer.parse(value);
 
-      /** ─────────────── EQUALITY ─────────────── */
-      case "eq":
-        clause = { [id]: { equals: value } };
-        break;
-      case "ne":
-        clause = { [id]: { not: value } };
-        break;
-
-      /** ─────────────── NUMERIC / DATE COMPARISONS ─────────────── */
-      case "lt":
-        clause = { [id]: { lt: value } };
-        break;
-      case "lte":
-        clause = { [id]: { lte: value } };
-        break;
-      case "gt":
-        clause = { [id]: { gt: value } };
-        break;
-      case "gte":
-        clause = { [id]: { gte: value } };
-        break;
-
-      /** ─────────────── RANGE ─────────────── */
-      case "isBetween":
-        if (!Array.isArray(value) || value.length !== 2) {
-          throw new Error(`"isBetween" requires an array of two values`);
-        }
-        clause = {
-          AND: [
-            { [id]: { gte: (value as number[])[0] } },
-            { [id]: { lte: (value as number[])[1] } },
-          ],
-        };
-        break;
-
-      /** ─────────────── MULTI SELECT ─────────────── */
-      case "inArray":
-        clause = {
-          [id]: { hasSome: Array.isArray(value) ? value : [value] },
-        };
-        break;
-      case "notInArray":
-        clause = {
-          NOT: { [id]: { hasSome: Array.isArray(value) ? value : [value] } },
-        };
-        break;
-
-      /** ─────────────── EMPTY / NOT EMPTY ─────────────── */
-      case "isEmpty":
-        clause = { [id]: null };
-        break;
-      case "isNotEmpty":
-        clause = { NOT: { [id]: null } };
-        break;
-
-      default:
-        throw new Error(`Unsupported operator: ${operator as string}`);
-    }
+    const clause = variantConfig.operators[operator]!(
+      id,
+      typedValue as unknown[],
+    );
 
     conditions.push(clause);
   }

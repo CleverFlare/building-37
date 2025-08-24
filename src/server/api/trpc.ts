@@ -25,8 +25,10 @@ import { db } from "@/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = { role: "admin", username: "admin" };
   return {
     db,
+    session,
     ...opts,
   };
 };
@@ -96,6 +98,29 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
+const isAuthed = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.session?.username) {
+    throw new Error("غير مصرح");
+  }
+  return next({
+    ctx: {
+      // Provide the user explicitly to downstream resolvers
+      session: ctx.session,
+    },
+  });
+});
+
+const hasRole = (roles: string[]) =>
+  t.middleware(async ({ ctx, next }) => {
+    if (!roles.includes(ctx.session.role)) {
+      throw new Error("ممنوع: لا تملك دور كافي");
+    }
+
+    return next({
+      ctx: { session: ctx.session },
+    });
+  });
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -103,4 +128,10 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
+
 export const publicProcedure = t.procedure.use(timingMiddleware);
+
+export const authedProcedure = t.procedure.use(isAuthed);
+
+export const roleProcedure = (roles: string[]) =>
+  t.procedure.use(isAuthed).use(hasRole(roles));

@@ -3,6 +3,7 @@ import type { Apartment } from "@prisma/client";
 import {
   createSearchParamsCache,
   parseAsInteger,
+  parseAsString,
   parseAsStringEnum,
 } from "nuqs/server";
 
@@ -15,6 +16,7 @@ export const searchParamsCache = createSearchParamsCache({
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+  name: parseAsString.withDefault(""),
 });
 
 export type GetApartmentsSchema = Awaited<

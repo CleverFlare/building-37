@@ -13,14 +13,21 @@ export async function getApartments(input: GetApartmentsSchema) {
 
   const limit = input.perPage;
 
+  let whereObject = {};
+
+  if (input.name)
+    whereObject = { AND: [{ ownerName: input.name }, { ...whereClause }] };
+  else whereObject = whereClause;
+
   const data = await db.apartment.findMany({
-    where: whereClause,
+    where: whereObject,
     take: limit,
     skip: offset,
+    orderBy: { apartmentNumber: "asc" },
   });
 
   const total = await db.apartment.count({
-    where: whereClause,
+    where: whereObject,
   });
 
   const totalPages = Math.ceil(total / input.perPage);

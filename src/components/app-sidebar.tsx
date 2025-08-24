@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +24,7 @@ z.config(ar());
 
 export function AppSidebar() {
   const pathname = usePathname();
+
   return (
     <Sidebar side="right">
       <SidebarHeader>
@@ -46,14 +48,14 @@ export function AppSidebar() {
                       : item.activeOn?.some((activeOn) =>
                           typeof activeOn === "string"
                             ? pathname === activeOn
-                            : activeOn.test(pathname),
+                            : new RegExp(activeOn).test(pathname),
                         );
 
                   return (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton asChild isActive={isActive}>
                         <Link href={item.href}>
-                          <item.icon />
+                          <item.icon weight={isActive ? "fill" : "regular"} />
                           <span>{item.label}</span>
                         </Link>
                       </SidebarMenuButton>

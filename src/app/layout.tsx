@@ -8,6 +8,7 @@ import { DirectionProvider } from "@/components/direction-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "37 Building System",
@@ -39,7 +40,10 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <DirectionProvider dir="rtl">
-              <TRPCReactProvider>{children}</TRPCReactProvider>
+              <TRPCReactProvider>
+                {children}
+                <Toaster />
+              </TRPCReactProvider>
             </DirectionProvider>
           </ThemeProvider>
         </NuqsAdapter>

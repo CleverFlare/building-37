@@ -14,8 +14,11 @@ model Apartment {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   apartmentNumber Int
   ownerName       String
+  ownerPhone      String
   occupantName    String?
+  occupantPhone   String?
   isRented        Boolean
+  isOccupied      Boolean
   createdAt       DateTime @default(now())
   updateAt        DateTime @updatedAt
 }

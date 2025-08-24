@@ -1,7 +1,7 @@
 "use client";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react/dist/ssr";
 import { Input } from "./ui/input";
-import { useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { useState, type FormEvent } from "react";
 import { XIcon } from "lucide-react";
 
@@ -10,7 +10,10 @@ export default function NuqsSearchInput({
 }: {
   placeholder?: string;
 }) {
-  const [search, setSearch] = useQueryState("name");
+  const [search, setSearch] = useQueryState(
+    "name",
+    parseAsString.withDefault("").withOptions({ shallow: false }),
+  );
   const [value, setValue] = useState(search);
 
   async function handleSubmit(e: FormEvent) {

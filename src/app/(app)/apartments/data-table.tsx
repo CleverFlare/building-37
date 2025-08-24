@@ -22,7 +22,7 @@ export function ApartmentsTable<TData, TValue>({
   data,
   pageCount,
 }: DataTableProps<TData, TValue>) {
-  const { table } = useDataTable({
+  const { table, shallow, debounceMs, throttleMs } = useDataTable({
     pageCount,
     data,
     columns,
@@ -31,7 +31,7 @@ export function ApartmentsTable<TData, TValue>({
     shallow: false,
     initialState: {
       columnVisibility: {
-        searchableOccupantName: false,
+        isOccupied: false,
       },
     },
   });
@@ -39,9 +39,14 @@ export function ApartmentsTable<TData, TValue>({
   return (
     <DataTable table={table}>
       <div className="flex items-center justify-between">
-        <NuqsSearchInput placeholder="بحث في أسماء الملاك..." />
+        <NuqsSearchInput placeholder="بحث في إسم المالك..." />
         <div className="flex items-center gap-4">
-          <DataTableFilterList table={table} />
+          <DataTableFilterList
+            table={table}
+            shallow={shallow}
+            debounceMs={debounceMs}
+            throttleMs={throttleMs}
+          />
           <Separator
             orientation="vertical"
             className="data-[orientation=vertical]:h-5"

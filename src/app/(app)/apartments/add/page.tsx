@@ -1,3 +1,5 @@
+import { AddApartmentForm } from "./form";
+
 export default function Page() {
   return (
     <div className="flex flex-col gap-4">
@@ -8,6 +10,7 @@ export default function Page() {
           نموذج مُخصص يشمل الحقول الأساسية مثل رقم الشقة إسم المالك وإسم الساكن.
         </p>
       </div>
+      <AddApartmentForm />
     </div>
   );
 }

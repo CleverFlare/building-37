@@ -1,15 +1,15 @@
+import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 import {
   BuildingApartmentIcon,
   CoinsIcon,
   UsersIcon,
 } from "@phosphor-icons/react/ssr";
-import type { ElementType } from "react";
 
 type Navlink = {
   id: string;
   label: string;
   href: string;
-  icon: ElementType;
+  icon: Icon;
   activeOn?: (string | RegExp)[];
 };
 
@@ -48,6 +48,7 @@ export const navigation: Navigation = {
           id: "apartments",
           label: "الشقق",
           href: "/apartments",
+          activeOn: ["/apartments", /\/apartments\/(.*?)/gi],
           icon: BuildingApartmentIcon,
         },
       ],

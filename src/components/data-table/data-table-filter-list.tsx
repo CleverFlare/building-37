@@ -67,6 +67,7 @@ import type {
   FilterOperator,
   JoinOperator,
 } from "@/types/data-table";
+import { useRouter } from "next/navigation";
 
 const FILTERS_KEY = "filters";
 const JOIN_OPERATOR_KEY = "joinOperator";
