@@ -42,7 +42,7 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-input/50 data-[state=open]:text-sidebar-foreground bg-card border shadow-xs"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -50,7 +50,7 @@ export function NavUser({
               </Avatar>
               <div className="grid flex-1 text-right text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs" dir="ltr">
+                <span className="text-foreground truncate text-xs" dir="ltr">
                   {user.username}
                 </span>
               </div>

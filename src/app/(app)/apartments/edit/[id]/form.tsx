@@ -2,7 +2,7 @@
 import { PhoneInput } from "@/components/phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type AddApartmentSchema, addApartmentSchema } from "./validation";
+import { editApartmentSchema, type EditApartmentSchema } from "./validation";
 import {
   Form,
   FormControl,
@@ -20,44 +20,36 @@ import { api } from "@/trpc/react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { TRPCError } from "@trpc/server";
-import { toast } from "sonner";
 
-export function AddApartmentForm() {
-  const form = useForm<AddApartmentSchema>({
-    resolver: zodResolver(addApartmentSchema),
-    defaultValues: {
-      rented: false,
-      occupied: false,
-      owner: {
-        name: "",
-        phone: "",
-      },
-      occupant: {
-        name: "",
-        phone: "",
-      },
-      apartmentNumber: 1,
-    },
+export function EditApartmentForm({
+  initialValues,
+  id,
+}: {
+  initialValues: EditApartmentSchema;
+  id: string;
+}) {
+  const form = useForm<EditApartmentSchema>({
+    resolver: zodResolver(editApartmentSchema),
+    defaultValues: initialValues,
   });
 
   const router = useRouter();
 
-  const { mutateAsync, isPending } = api.apartments.create.useMutation({
-    onError: (error) => {
-      toast.error(error.message);
+  const { mutateAsync, isPending } = api.apartments.edit.useMutation({
+    onError: (errors) => {
+      console.log(errors);
     },
     onSuccess: () => {
       router.push("/apartments");
     },
   });
 
-  async function submit(data: AddApartmentSchema) {
-    await mutateAsync(data);
+  async function submit(data: EditApartmentSchema) {
+    await mutateAsync({ ...data, id });
   }
 
   return (
-    <SchemaProvider schema={addApartmentSchema}>
+    <SchemaProvider schema={editApartmentSchema}>
       <Form {...form}>
         <form
           className="grid grid-cols-1 gap-8 lg:grid-cols-2 xl:grid-cols-3"
@@ -210,7 +202,7 @@ export function AddApartmentForm() {
             </Button>
             <Button disabled={isPending}>
               {isPending && <Loader2 className="animate-spin" />}
-              إضافة
+              تعديل
             </Button>
           </div>
         </form>

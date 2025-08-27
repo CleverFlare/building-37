@@ -1,19 +1,33 @@
 "use client";
 
+import DeleteApartmentDropdownItem from "@/components/delete-apartment-dropdown-item";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { api } from "@/trpc/react";
 import {
   CalendarDotsIcon,
   CheckIcon,
   HouseLineIcon,
+  PenIcon,
   PhoneIcon,
+  QrCodeIcon,
   SlidersHorizontalIcon,
   TextIndentIcon,
   ToggleLeftIcon,
+  TrashIcon,
   XIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { EllipsisIcon } from "lucide-react";
+import Link from "next/link";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -72,6 +86,12 @@ export const columns: ColumnDef<Apartment>[] = [
   {
     accessorKey: "ownerPhone",
     header: "رقم هاتف المالك",
+    meta: {
+      label: "رقم هاتف المالك",
+      variant: "text",
+      icon: PhoneIcon,
+    },
+    enableColumnFilter: true,
     cell: ({
       row: {
         original: { ownerPhone },
@@ -126,13 +146,17 @@ export const columns: ColumnDef<Apartment>[] = [
     header: "رقم هاتف الساكن",
     cell: ({
       row: {
-        original: { occupantPhone },
+        original: { occupantPhone, isOccupied },
       },
     }) => {
-      return occupantPhone ? (
-        <span dir="ltr">{occupantPhone}</span>
+      return isOccupied ? (
+        occupantPhone ? (
+          <span dir="ltr">{occupantPhone}</span>
+        ) : (
+          <p className="text-muted-foreground">لا يوجد</p>
+        )
       ) : (
-        <p className="text-muted-foreground">لا يوجد</p>
+        <p className="text-muted-foreground">غير مسكونة</p>
       );
     },
     meta: {
@@ -183,5 +207,41 @@ export const columns: ColumnDef<Apartment>[] = [
       icon: CalendarDotsIcon,
     },
     enableColumnFilter: true,
+  },
+  {
+    id: "actions",
+    cell: function Cell({
+      row: {
+        original: { id },
+      },
+    }) {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              aria-label="Open menu"
+              variant="ghost"
+              className="data-[state=open]:bg-muted flex size-8 p-0"
+            >
+              <EllipsisIcon className="size-4" aria-hidden="true" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <QrCodeIcon />
+              QR
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/apartments/edit/${id}`}>
+                <PenIcon />
+                تعديل
+              </Link>
+            </DropdownMenuItem>
+            <DeleteApartmentDropdownItem id={id} />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+    size: 30,
   },
 ];

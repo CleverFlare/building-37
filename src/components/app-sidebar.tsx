@@ -12,13 +12,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { IconInnerShadowTop } from "@tabler/icons-react";
 import { navigation } from "@/config/navigation";
 import Link from "next/link";
 import { NavUser } from "./nav-user";
 import { usePathname } from "next/navigation";
 import { z } from "zod/v4";
 import { ar } from "zod/v4/locales";
+import { MoneyIcon } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/utils";
 
 z.config(ar());
 
@@ -30,8 +31,10 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center gap-2 pt-2">
-            <IconInnerShadowTop className="!size-5" />
-            <span className="text-base font-semibold">Acme Inc</span>
+            <span className="bg-primary border-primary flex size-8 items-center justify-center rounded-lg border-2 text-white inset-shadow-sm inset-shadow-white/50">
+              <MoneyIcon className="!size-5" />
+            </span>
+            <span className={cn("font-bold")}>مصاريفنا</span>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
