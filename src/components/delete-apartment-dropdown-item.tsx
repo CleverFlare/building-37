@@ -10,7 +10,7 @@ export default function DeleteApartmentDropdownItem({ id }: { id: string }) {
   const router = useRouter();
 
   async function handleClick() {
-    await mutateAsync({ id });
+    await mutateAsync([{ id }]);
 
     router.refresh();
   }

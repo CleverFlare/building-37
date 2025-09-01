@@ -57,4 +57,4 @@ export const editApartmentSchema = z
     }
   });
 
-export const deleteApartmentSchema = z.object({ id: z.string() });
+export const deleteApartmentSchema = z.array(z.object({ id: z.string() }));

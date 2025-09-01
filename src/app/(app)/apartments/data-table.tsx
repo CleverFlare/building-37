@@ -10,6 +10,7 @@ import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/data-table/data-table";
 import { useDataTable } from "@/hooks/use-data-table";
+import { TableActionBar } from "./action-bar";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -37,7 +38,7 @@ export function ApartmentsTable<TData, TValue>({
   });
 
   return (
-    <DataTable table={table}>
+    <DataTable table={table} actionBar={<TableActionBar table={table} />}>
       <div className="flex items-center justify-between">
         <NuqsSearchInput placeholder="بحث في إسم المالك..." />
         <div className="flex items-center gap-4">

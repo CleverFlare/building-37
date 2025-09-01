@@ -76,7 +76,9 @@ export const apartmentsRouter = createTRPCRouter({
   delete: roleProcedure(["admin", "moderator"])
     .input(deleteApartmentSchema)
     .mutation(async ({ input }) => {
-      await db.apartment.delete({ where: { id: input.id } });
+      await db.apartment.deleteMany({
+        where: { id: { in: input.map(({ id }) => id) } },
+      });
     }),
   qrPdf: roleProcedure(["admin", "moderator"])
     .input(
