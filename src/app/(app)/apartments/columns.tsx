@@ -1,6 +1,7 @@
 "use client";
 
 import DeleteApartmentDropdownItem from "@/components/delete-apartment-dropdown-item";
+import QrDialog from "@/components/qr-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,7 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { api } from "@/trpc/react";
 import {
   CalendarDotsIcon,
   CheckIcon,
@@ -21,13 +21,13 @@ import {
   SlidersHorizontalIcon,
   TextIndentIcon,
   ToggleLeftIcon,
-  TrashIcon,
   XIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { EllipsisIcon } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -212,34 +212,46 @@ export const columns: ColumnDef<Apartment>[] = [
     id: "actions",
     cell: function Cell({
       row: {
-        original: { id },
+        original: { id, apartmentNumber },
       },
     }) {
+      const [open, setIsOpen] = useState<boolean>(false);
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              aria-label="Open menu"
-              variant="ghost"
-              className="data-[state=open]:bg-muted flex size-8 p-0"
-            >
-              <EllipsisIcon className="size-4" aria-hidden="true" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <QrCodeIcon />
-              QR
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={`/apartments/edit/${id}`}>
-                <PenIcon />
-                تعديل
-              </Link>
-            </DropdownMenuItem>
-            <DeleteApartmentDropdownItem id={id} />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <QrDialog
+            open={open}
+            setIsOpen={setIsOpen}
+            apartmentNumber={apartmentNumber}
+          />
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-label="Open menu"
+                variant="ghost"
+                className="data-[state=open]:bg-muted flex size-8 p-0"
+              >
+                <EllipsisIcon className="size-4" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => {
+                  setIsOpen(true);
+                }}
+              >
+                <QrCodeIcon />
+                QR
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`/apartments/edit/${id}`}>
+                  <PenIcon />
+                  تعديل
+                </Link>
+              </DropdownMenuItem>
+              <DeleteApartmentDropdownItem id={id} />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       );
     },
     size: 30,

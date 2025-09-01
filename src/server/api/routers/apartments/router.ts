@@ -6,6 +6,11 @@ import {
   editApartmentSchema,
 } from "./validation";
 import { db } from "@/server/db";
+import { z } from "zod/v4";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
+import QRCode from "qrcode";
+import { mergePdfs } from "@/lib/merge-pdfs";
 
 export const apartmentsRouter = createTRPCRouter({
   create: roleProcedure(["admin", "moderator"])
@@ -72,5 +77,68 @@ export const apartmentsRouter = createTRPCRouter({
     .input(deleteApartmentSchema)
     .mutation(async ({ input }) => {
       await db.apartment.delete({ where: { id: input.id } });
+    }),
+  qrPdf: roleProcedure(["admin", "moderator"])
+    .input(
+      z.array(z.object({ qrData: z.string(), apartmentNumber: z.number() })),
+    )
+    .mutation(async ({ input }) => {
+      const viewport = {
+        deviceScaleFactor: 1,
+        hasTouch: false,
+        height: 1080,
+        isLandscape: true,
+        isMobile: false,
+        width: 1920,
+      };
+      const browser = await puppeteer.launch({
+        args: puppeteer.defaultArgs({ args: chromium.args, headless: "shell" }),
+        defaultViewport: viewport,
+        executablePath: await chromium.executablePath(),
+        headless: "shell",
+      });
+
+      const pdfBuffers: Uint8Array<ArrayBufferLike>[] = [];
+
+      for (const data of input) {
+        const qrPng = await QRCode.toDataURL(data.qrData); // generates base64 PNG
+        const page = await browser.newPage();
+        await page.setContent(
+          `
+        <html>
+          <head>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+          </head>
+          <body style="display:flex;align-items:center;justify-content:center;" dir="rtl">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <p style="font-size:50px;font-family:Almarai,Almarai Fallback;font-style: normal;font-weight:bold;">شقة رقم: ${data.apartmentNumber}</p>
+              <img src="${qrPng}" width="500" height="500" />
+            </div>
+          </body>
+        </html>
+      `,
+          { waitUntil: "networkidle0" },
+        );
+
+        const pdf = await page.pdf({
+          format: "A4",
+          printBackground: true,
+        });
+
+        pdfBuffers.push(pdf);
+
+        await page.close();
+      }
+
+      await browser.close();
+
+      const mergedPDFs = await mergePdfs(pdfBuffers);
+
+      // Return base64 instead of raw Buffer so tRPC can serialize
+      return {
+        pdf: Buffer.from(mergedPDFs).toString("base64"),
+      };
     }),
 });
