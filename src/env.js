@@ -1,5 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const env = createEnv({
   /**
@@ -7,10 +7,17 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z.url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    JWT_PRIVATE: z.string(),
+    GMAIL_USER: z.string(),
+    GMAIL_PASS: z.string(),
+    PASSWORD_SALT: z
+      .string()
+      .transform((v) => +v)
+      .pipe(z.number()),
   },
 
   /**
@@ -29,6 +36,10 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    JWT_PRIVATE: process.env.JWT_PRIVATE,
+    GMAIL_USER: process.env.GMAIL_USER,
+    GMAIL_PASS: process.env.GMAIL_PASS,
+    PASSWORD_SALT: process.env.PASSWORD_SALT,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

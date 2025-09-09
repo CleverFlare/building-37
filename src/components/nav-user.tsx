@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronsUpDown, Loader2, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -23,6 +23,8 @@ import {
   PenIcon,
   UserCircleIcon,
 } from "@phosphor-icons/react/dist/ssr";
+import { api } from "@/trpc/react";
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -34,6 +36,11 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+
+  const router = useRouter();
+
+  const { mutate: mutateLogout, isPending: isLogoutPending } =
+    api.auth.logout.useMutation({ onSuccess: () => router.refresh() });
 
   return (
     <SidebarMenu>
@@ -93,8 +100,15 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
+            <DropdownMenuItem
+              disabled={isLogoutPending}
+              onClick={() => mutateLogout()}
+            >
+              {isLogoutPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <LogOut />
+              )}
               تسجيل خروج
             </DropdownMenuItem>
           </DropdownMenuContent>

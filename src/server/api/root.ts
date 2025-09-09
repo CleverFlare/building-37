@@ -2,6 +2,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { z } from "zod/v4";
 import { ar } from "zod/v4/locales";
 import { apartmentsRouter } from "./routers/apartments/router";
+import { authRouter } from "./routers/auth/router";
 
 z.config(ar());
 
@@ -12,6 +13,7 @@ z.config(ar());
  */
 export const appRouter = createTRPCRouter({
   apartments: apartmentsRouter,
+  auth: authRouter,
 });
 
 // export type definition of API

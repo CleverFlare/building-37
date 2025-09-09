@@ -22,3 +22,15 @@ model Apartment {
   createdAt       DateTime @default(now())
   updateAt        DateTime @updatedAt
 }
+
+model User {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  firstName    String
+  lastName     String
+  username     String    @unique
+  email        String    @unique
+  passwordHash String
+  otpHash      String? // hashed OTP
+  otpExpires   DateTime?
+  createdAt    DateTime  @default(now())
+}
