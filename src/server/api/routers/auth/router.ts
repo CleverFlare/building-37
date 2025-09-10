@@ -78,7 +78,6 @@ export const authRouter = createTRPCRouter({
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
-          // eslint-disable-next-line
           avatarUrl: user.avatarUrl,
           role: "admin",
         },
@@ -131,7 +130,6 @@ export const authRouter = createTRPCRouter({
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
-          // eslint-disable-next-line
           avatarUrl: user.avatarUrl,
           role: "admin",
         },

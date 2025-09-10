@@ -241,6 +241,7 @@ function FacetedItem(props: FacetedItemProps) {
         context.onItemSelect(currentValue);
       }
     },
+    // eslint-disable-next-line
     [onSelect, context.onItemSelect],
   );
 

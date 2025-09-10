@@ -1,11 +1,11 @@
 import { db } from "@/server/db";
 import type { GetApartmentsSchema } from "./validations";
-import { filtersToPrismaWhere } from "@/lib/filters-prisma-where";
+import { filtersToPrismaWhere, type Filter } from "@/lib/filters-prisma-where";
 import type { Prisma } from "@prisma/client";
 
 export async function getApartments(input: GetApartmentsSchema) {
   const whereClause = filtersToPrismaWhere<Prisma.ApartmentWhereInput>(
-    input.filters,
+    input.filters as Filter[],
     input.joinOperator,
   );
 

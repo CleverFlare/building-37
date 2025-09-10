@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/data-table/data-table";
 import { useDataTable } from "@/hooks/use-data-table";
 import { TableActionBar } from "./action-bar";
+import type { Apartment } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -18,11 +19,11 @@ interface DataTableProps<TData, TValue> {
   pageCount: number;
 }
 
-export function ApartmentsTable<TData, TValue>({
+export function ApartmentsTable<TValue>({
   columns,
   data,
   pageCount,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<Apartment, TValue>) {
   const { table, shallow, debounceMs, throttleMs } = useDataTable({
     pageCount,
     data,

@@ -20,7 +20,6 @@ import { api } from "@/trpc/react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { TRPCError } from "@trpc/server";
 import { toast } from "sonner";
 
 export function AddApartmentForm() {

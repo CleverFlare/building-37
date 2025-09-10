@@ -1,9 +1,12 @@
 import type { dataTableConfig } from "@/config/data-table";
 import { prismaFiltersConfig } from "@/config/prisma-filters";
 
-type Filter = {
+export type Filter = {
   id: string;
-  variant: (typeof dataTableConfig.filterVariants)[number];
+  variant: Exclude<
+    (typeof dataTableConfig.filterVariants)[number],
+    "range" | "dateRange"
+  >;
   operator: (typeof dataTableConfig.operators)[number];
   value: unknown;
 };
