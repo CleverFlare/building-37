@@ -30,10 +30,11 @@ export function NavUser({
   user,
 }: {
   user: {
-    name: string;
+    firstName: string;
+    lastName: string;
     username: string;
-    avatar: string;
-  };
+    avatarUrl?: string;
+  } | null;
 }) {
   const { isMobile } = useSidebar();
 
@@ -52,13 +53,15 @@ export function NavUser({
               className="data-[state=open]:bg-input/50 data-[state=open]:text-sidebar-foreground bg-card border shadow-xs"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={user?.avatarUrl} alt={user?.firstName} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-right text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">
+                  {user?.firstName ?? "Unknown"} {user?.lastName}
+                </span>
                 <span className="text-foreground truncate text-xs" dir="ltr">
-                  {user.username}
+                  {user?.username ?? "unknown"}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -73,13 +76,15 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={user?.avatarUrl} alt={user?.firstName} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-right text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">
+                    {user?.firstName ?? "Unknown"} {user?.lastName}
+                  </span>
                   <span className="truncate text-xs" dir="ltr">
-                    {user.username}
+                    {user?.username ?? "unknown"}
                   </span>
                 </div>
               </div>

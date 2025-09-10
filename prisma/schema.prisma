@@ -33,4 +33,5 @@ model User {
   otpHash      String? // hashed OTP
   otpExpires   DateTime?
   createdAt    DateTime  @default(now())
+  avatarUrl    String?
 }

@@ -72,7 +72,16 @@ export const authRouter = createTRPCRouter({
       });
 
       return {
-        user: { id: user.id, username: user.username, email: user.email },
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          // eslint-disable-next-line
+          avatarUrl: user.avatarUrl,
+          role: "admin",
+        },
         token,
       };
     }),
@@ -116,7 +125,16 @@ export const authRouter = createTRPCRouter({
       });
 
       return {
-        user: { id: user.id, username: user.username, email: user.email },
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          // eslint-disable-next-line
+          avatarUrl: user.avatarUrl,
+          role: "admin",
+        },
         token,
       };
     }),

@@ -20,10 +20,12 @@ import { z } from "zod/v4";
 import { ar } from "zod/v4/locales";
 import { cn } from "@/lib/utils";
 import Logo from "./logo";
+import { useAuth } from "@/stores/auth";
 
 z.config(ar());
 
 export function AppSidebar() {
+  const user = useAuth((state) => state.user);
   const pathname = usePathname();
 
   return (
@@ -69,9 +71,7 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser
-          user={{ name: "Muhammad Maher", username: "@admin", avatar: "" }}
-        />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

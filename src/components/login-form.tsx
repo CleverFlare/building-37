@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { api } from "@/trpc/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/stores/auth";
 
 // ---------------- Schema ----------------
 const loginSchema = z.object({
@@ -40,6 +41,8 @@ export function LoginForm({
     },
   });
 
+  const setUser = useAuth((state) => state.setUser);
+
   const router = useRouter();
 
   const loginMutation = api.auth.login.useMutation({
@@ -49,6 +52,8 @@ export function LoginForm({
       // localStorage.setItem("token", data.token);
       router.push("/");
       form.reset();
+
+      setUser(data.user);
     },
     onError: (err) => {
       toast.error(err.message);

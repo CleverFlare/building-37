@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { api } from "@/trpc/react"; // T3 stack tRPC hook client
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/stores/auth";
 
 // ---------------- Schema ----------------
 const registerSchema = z.object({
@@ -45,13 +46,17 @@ export function RegisterForm({
     },
   });
 
+  const setUser = useAuth((state) => state.setUser);
+
   const router = useRouter();
 
   const registerMutation = api.auth.register.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("تم إنشاء الحساب بنجاح 🎉");
       router.push("/");
       form.reset();
+
+      setUser(data.user);
     },
     onError: (err) => {
       toast.error(err.message);

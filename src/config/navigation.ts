@@ -2,6 +2,7 @@ import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 import {
   BuildingApartmentIcon,
   CoinsIcon,
+  HouseLineIcon,
   UsersIcon,
 } from "@phosphor-icons/react/ssr";
 
@@ -27,6 +28,12 @@ export const navigation: Navigation = {
     {
       title: "إدارة الأموال",
       links: [
+        {
+          id: "home",
+          label: "الرئيسية",
+          href: "/",
+          icon: HouseLineIcon,
+        },
         {
           id: "monthly-fees",
           label: "المصروفات الشهرية",
