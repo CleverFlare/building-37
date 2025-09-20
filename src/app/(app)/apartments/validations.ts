@@ -1,5 +1,10 @@
-import { getFiltersStateParser, getSortingStateParser } from "@/lib/parsers";
+import {
+  getFiltersStateParser,
+  getSortingStateParser,
+} from "@/features/data-table/lib/parsers";
+
 import type { Apartment } from "@prisma/client";
+
 import {
   createSearchParamsCache,
   parseAsInteger,

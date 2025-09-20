@@ -63,7 +63,7 @@ import {
 } from "@/features/data-table/lib/data-table";
 import { formatDate } from "@/features/data-table/lib/format";
 import { generateId } from "@/lib/id";
-import { getFiltersStateParser } from "@/lib/parsers";
+import { getFiltersStateParser } from "@/features/data-table/lib/parsers";
 import { cn } from "@/lib/utils";
 import type {
   ExtendedColumnFilter,
