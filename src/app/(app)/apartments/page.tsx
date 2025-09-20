@@ -1,7 +1,7 @@
 import { columns } from "./columns";
 import { ApartmentsTable } from "./data-table";
 import type { SearchParams } from "nuqs/server";
-import { getValidFilters } from "@/lib/data-table";
+import { getValidFilters } from "@/features/data-table/lib/data-table";
 import { searchParamsCache } from "./validations";
 import { getApartments } from "./queries";
 

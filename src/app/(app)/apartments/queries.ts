@@ -1,6 +1,9 @@
 import { db } from "@/server/db";
 import type { GetApartmentsSchema } from "./validations";
-import { filtersToPrismaWhere, type Filter } from "@/lib/filters-prisma-where";
+import {
+  filtersToPrismaWhere,
+  type Filter,
+} from "@/features/data-table/lib/filters-prisma-where";
 import type { Prisma } from "@prisma/client";
 
 export async function getApartments(input: GetApartmentsSchema) {

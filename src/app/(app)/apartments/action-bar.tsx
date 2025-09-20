@@ -6,7 +6,7 @@ import {
   DataTableActionBar,
   DataTableActionBarAction,
   DataTableActionBarSelection,
-} from "@/components/data-table/data-table-action-bar";
+} from "@/features/data-table/components/data-table-action-bar";
 import { Separator } from "@/components/ui/separator";
 import { FilePdfIcon, TrashIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Apartment } from "./columns";

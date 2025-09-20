@@ -2,14 +2,14 @@
 
 import { type ColumnDef } from "@tanstack/react-table";
 
-import { DataTableFilterList } from "@/components/data-table/data-table-filter-list";
+import { DataTableFilterList } from "@/features/data-table/components/data-table-filter-list";
 import NuqsSearchInput from "@/components/nuqs-search-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { Separator } from "@/components/ui/separator";
-import { DataTable } from "@/components/data-table/data-table";
-import { useDataTable } from "@/hooks/use-data-table";
+import { DataTable } from "@/features/data-table/components/data-table";
+import { useDataTable } from "@/features/data-table/hooks/use-data-table";
 import { TableActionBar } from "./action-bar";
 import type { Apartment } from "./columns";
 
