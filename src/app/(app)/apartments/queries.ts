@@ -8,7 +8,7 @@ import type { Prisma } from "@prisma/client";
 
 export async function getApartments(input: GetApartmentsSchema) {
   const whereClause = filtersToPrismaWhere<Prisma.ApartmentWhereInput>(
-    input.filters as Filter[],
+    input.filters as unknown as Filter[],
     input.joinOperator,
   );
 
