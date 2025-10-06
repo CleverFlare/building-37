@@ -25,6 +25,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 import { EllipsisIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -198,9 +199,7 @@ export const columns: ColumnDef<Apartment>[] = [
       row: {
         original: { createdAt },
       },
-    }) => (
-      <span dir="ltr">{format(createdAt, "dd MMM yyyy - mm : h aaa")}</span>
-    ),
+    }) => format(createdAt, "dd MMM yyyy - mm : h aaa", { locale: ar }),
     meta: {
       label: "تاريخ الإضافة",
       variant: "date",

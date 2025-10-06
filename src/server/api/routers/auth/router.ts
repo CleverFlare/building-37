@@ -47,6 +47,10 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      const adminUser = await db.user.count({
+        where: { role: { equals: "admin" } },
+      });
+
       const passwordHash = await bcrypt.hash(password, env.PASSWORD_SALT);
 
       const user = await db.user.create({
@@ -56,6 +60,7 @@ export const authRouter = createTRPCRouter({
           username,
           email,
           passwordHash,
+          ...(adminUser > 0 ? { role: "user" } : { role: "admin" }),
         },
       });
 

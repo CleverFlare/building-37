@@ -16,7 +16,11 @@ export default function DeleteApartmentDropdownItem({ id }: { id: string }) {
   }
 
   return (
-    <DropdownMenuItem disabled={isPending} onClick={handleClick}>
+    <DropdownMenuItem
+      disabled={isPending}
+      onClick={handleClick}
+      variant="destructive"
+    >
       {isPending ? <Loader2 className="animate-spin" /> : <TrashIcon />}
       مسح
     </DropdownMenuItem>

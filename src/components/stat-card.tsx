@@ -11,7 +11,7 @@ export default function StatCard({
   value: string;
 }) {
   return (
-    <Card className="w-full">
+    <Card className="w-full shadow-xs">
       <CardContent className="flex flex-col items-center gap-2">
         {children}
         <p className="text-muted-foreground text-sm">{title}</p>

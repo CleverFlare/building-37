@@ -34,4 +34,11 @@ model User {
   otpExpires   DateTime?
   createdAt    DateTime  @default(now())
   avatarUrl    String?
+  role         Role
+}
+
+enum Role {
+  admin
+  moderator
+  user
 }
