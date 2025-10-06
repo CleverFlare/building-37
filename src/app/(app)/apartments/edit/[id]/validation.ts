@@ -15,35 +15,23 @@ export const editApartmentSchema = z
     apartmentNumber: z.number().min(1),
     owner: ownerSchema,
     occupant: occupantSchema,
-    occupied: z.boolean({ error: "هذا الحقل مطلوب" }),
-    rented: z.boolean({ error: "هذا الحقل مطلوب" }),
+    state: z.enum(["vacant", "occupied", "rented"]),
   })
   .check(({ value, issues }) => {
-    if (value.rented && !value.occupied) {
-      issues.push({
-        code: "custom",
-        path: ["rented"],
-        message: "لا يمكن تأجير شقة غير مسكونة.",
-        input: value.rented,
-      });
-    }
-    //eslint-disable-next-line
-    if (value.rented && (!value?.occupant || !value?.occupant?.name)) {
+    const { state, occupant } = value;
+
+    // If rented, occupant name is required
+    if (state === "rented" && !occupant?.name) {
       issues.push({
         code: "custom",
         path: ["occupant", "name"],
         message: "الشقة المؤجرة يجب أن تحتوي على بيانات المستأجر (الساكن).",
-        input: value.occupied,
+        input: occupant?.name,
       });
     }
-    if (value.occupied && !value.occupant.name) {
-      issues.push({
-        code: "custom",
-        path: ["occupant", "name"],
-        message: "هذا الحقل مطلوب",
-        input: value.occupied,
-      });
-    }
+
+    // If occupied by owner, occupant should not be required — no issue needed
+    // If vacant, occupant should not be required — no issue needed
   });
 
 export type EditApartmentSchema = z.infer<typeof editApartmentSchema>;

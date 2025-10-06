@@ -17,8 +17,7 @@ model Apartment {
   ownerPhone      String
   occupantName    String?
   occupantPhone   String?
-  isRented        Boolean
-  isOccupied      Boolean
+  state           State    @default(vacant)
   createdAt       DateTime @default(now())
   updateAt        DateTime @updatedAt
 }
@@ -35,6 +34,12 @@ model User {
   createdAt    DateTime  @default(now())
   avatarUrl    String?
   role         Role
+}
+
+enum State {
+  vacant
+  occupied
+  rented
 }
 
 enum Role {

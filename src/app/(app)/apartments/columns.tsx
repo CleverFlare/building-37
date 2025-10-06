@@ -11,18 +11,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { arabicStates } from "@/config/apartment-arabic-state";
 import {
   CalendarDotsIcon,
-  CheckIcon,
-  HouseLineIcon,
+  HouseIcon,
   PenIcon,
   PhoneIcon,
   QrCodeIcon,
   SlidersHorizontalIcon,
   TextIndentIcon,
-  ToggleLeftIcon,
-  XIcon,
 } from "@phosphor-icons/react/dist/ssr";
+import type { State } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
@@ -39,8 +38,7 @@ export type Apartment = {
   ownerPhone: string;
   occupantName: string | null;
   occupantPhone: string | null;
-  isRented: boolean;
-  isOccupied: boolean;
+  state: State;
   createdAt: Date;
 };
 
@@ -102,22 +100,41 @@ export const columns: ColumnDef<Apartment>[] = [
     },
   },
   {
-    accessorKey: "isRented",
-    header: "مؤجرة؟",
+    id: "state",
+    header: "حالة الشقة",
     cell: ({
       row: {
-        original: { isRented },
+        original: { state },
       },
     }) => (
-      <Badge variant={isRented ? "secondary" : "outline"}>
-        {isRented ? <CheckIcon /> : <XIcon />}{" "}
-        {isRented ? "مؤجرة" : "غير مؤجرة"}
+      <Badge
+        variant={
+          (
+            { vacant: "ghost", occupied: "default", rented: "outline" } as const
+          )[state]
+        }
+      >
+        {arabicStates[state]}
       </Badge>
     ),
     meta: {
-      label: "مؤجرة؟",
-      variant: "boolean",
-      icon: ToggleLeftIcon,
+      label: "حالة الشقة",
+      variant: "select",
+      icon: HouseIcon,
+      options: [
+        {
+          label: "فارغة",
+          value: "vacant",
+        },
+        {
+          label: "مسكونة",
+          value: "occupied",
+        },
+        {
+          label: "مؤجرة",
+          value: "rented",
+        },
+      ],
     },
     enableColumnFilter: true,
   },
@@ -126,13 +143,13 @@ export const columns: ColumnDef<Apartment>[] = [
     header: "إسم الساكن",
     cell: ({
       row: {
-        original: { occupantName, isOccupied },
+        original: { occupantName, state },
       },
     }) =>
-      isOccupied ? (
+      state === "rented" ? (
         (occupantName ?? <p className="text-muted-foreground">غير معروف</p>)
       ) : (
-        <p className="text-muted-foreground">غير مسكونة</p>
+        <p className="text-muted-foreground">-</p>
       ),
     meta: {
       label: "إسم الساكن",
@@ -147,48 +164,23 @@ export const columns: ColumnDef<Apartment>[] = [
     header: "رقم هاتف الساكن",
     cell: ({
       row: {
-        original: { occupantPhone, isOccupied },
+        original: { occupantPhone, state },
       },
     }) => {
-      return isOccupied ? (
+      return state === "rented" ? (
         occupantPhone ? (
           <span dir="ltr">{occupantPhone}</span>
         ) : (
           <p className="text-muted-foreground">لا يوجد</p>
         )
       ) : (
-        <p className="text-muted-foreground">غير مسكونة</p>
+        <p className="text-muted-foreground">-</p>
       );
     },
     meta: {
       label: "رقم هاتف الساكن",
       variant: "text",
       icon: PhoneIcon,
-    },
-    enableColumnFilter: true,
-  },
-  {
-    id: "isOccupied",
-    accessorKey: "occupied",
-    header: "مسكونة؟",
-    cell: ({
-      row: {
-        original: { isOccupied },
-      },
-    }) => (
-      <span
-        className="flex size-5 items-center justify-center rounded text-white"
-        style={{
-          backgroundColor: isOccupied ? "#22c55e" : "#ef4444",
-        }}
-      >
-        {isOccupied ? <CheckIcon /> : <XIcon />}
-      </span>
-    ),
-    meta: {
-      label: "مسكونة؟",
-      variant: "boolean",
-      icon: HouseLineIcon,
     },
     enableColumnFilter: true,
   },

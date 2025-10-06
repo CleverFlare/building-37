@@ -27,8 +27,7 @@ export default async function Page({
         initialValues={{
           apartmentNumber: data.apartmentNumber,
           owner: { name: data.ownerName, phone: data.ownerPhone },
-          occupied: data.isOccupied,
-          rented: data.isRented,
+          state: data.state,
           occupant: {
             name: data.occupantName ?? "",
             phone: data.occupantPhone ?? "",

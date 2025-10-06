@@ -14,20 +14,26 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { api } from "@/trpc/react";
-import { Loader2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ButtonGroup, ButtonGroupText } from "@/components/ui/button-group";
+import { NumberInput } from "@/components/ui/number-input";
 
 export function AddApartmentForm() {
   const form = useForm<AddApartmentSchema>({
     resolver: zodResolver(addApartmentSchema),
     defaultValues: {
-      rented: false,
-      occupied: false,
+      state: "vacant",
       owner: {
         name: "",
         phone: "",
@@ -69,11 +75,10 @@ export function AddApartmentForm() {
               <FormItem>
                 <FormLabel>رقم الشقة</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="ادخل رقم صالحاً..."
-                    {...field}
-                    onChange={(e) => onChange(e.target.valueAsNumber)}
+                  <NumberInput
+                    minValue={1}
+                    value={field.value}
+                    onChange={onChange}
                   />
                 </FormControl>
                 <FormMessage />
@@ -113,16 +118,40 @@ export function AddApartmentForm() {
           />
           <FormField
             control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>حالة الشقة</FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="مثلاً، هل الشقة مؤجرة؟" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="vacant">فارغة</SelectItem>
+                      <SelectItem value="occupied">
+                        مسكونة (من المالك)
+                      </SelectItem>
+                      <SelectItem value="rented">مؤجرة</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="occupant.name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel isFieldRequired={form.watch("occupied")}>
+                <FormLabel isFieldRequired={form.watch("state") === "rented"}>
                   إسم الساكن
                 </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="الإسم كاملاً..."
-                    disabled={!form.watch("occupied")}
+                    disabled={form.watch("state") !== "rented"}
                     {...field}
                   />
                 </FormControl>
@@ -141,63 +170,9 @@ export function AddApartmentForm() {
                     countrySelectProps={{ disabled: true }}
                     defaultCountry="EG"
                     placeholder="ادخل رقم هاتف صالح..."
-                    disabled={!form.watch("occupied")}
+                    disabled={form.watch("state") !== "rented"}
                     {...field}
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="rented"
-            render={({ field }) => (
-              <FormItem className="col-start-1">
-                <FormControl>
-                  <Label className="hover:bg-accent/50 flex h-max items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
-                    <Checkbox
-                      id="toggle-2"
-                      className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <div className="grid gap-1.5 font-normal">
-                      <p className="text-sm leading-none font-medium">
-                        شقة مؤجرة؟
-                      </p>
-                      <p className="text-muted-foreground text-sm">
-                        هل قام صاحب الشقة بتأجير هذه الشقة؟
-                      </p>
-                    </div>
-                  </Label>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="occupied"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Label className="hover:bg-accent/50 flex h-max items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
-                    <Checkbox
-                      id="toggle-2"
-                      className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <div className="grid gap-1.5 font-normal">
-                      <p className="text-sm leading-none font-medium">
-                        الشقة مسكونة؟
-                      </p>
-                      <p className="text-muted-foreground text-sm">
-                        هل هناك احد يعيش بالشقة؟
-                      </p>
-                    </div>
-                  </Label>
                 </FormControl>
                 <FormMessage />
               </FormItem>

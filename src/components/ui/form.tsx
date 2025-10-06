@@ -104,9 +104,14 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function FormLabelRequiredAsterisk({ isOptional }: { isOptional?: boolean }) {
-  if (isOptional) return null;
-
-  return <span className="text-destructive text-lg">*</span>;
+  return (
+    <span
+      className="text-destructive text-lg"
+      style={{ visibility: isOptional ? "hidden" : "visible" }}
+    >
+      *
+    </span>
+  );
 }
 
 function FormLabel({

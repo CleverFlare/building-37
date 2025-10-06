@@ -701,10 +701,7 @@ function onFilterInputRender<TData>({
             >
               <FacetedBadgeList
                 options={columnMeta?.options}
-                placeholder={
-                  columnMeta?.placeholder ??
-                  `Select option${multiple ? "s" : ""}...`
-                }
+                placeholder={columnMeta?.placeholder ?? `حدد الخيار...`}
               />
             </Button>
           </FacetedTrigger>
@@ -714,10 +711,10 @@ function onFilterInputRender<TData>({
           >
             <FacetedInput
               aria-label={`Search ${columnMeta?.label} options`}
-              placeholder={columnMeta?.placeholder ?? "Search options..."}
+              placeholder={columnMeta?.placeholder ?? "البحث في الخيارات..."}
             />
             <FacetedList>
-              <FacetedEmpty>No options found.</FacetedEmpty>
+              <FacetedEmpty>لا توجد خيارات.</FacetedEmpty>
               <FacetedGroup>
                 {columnMeta?.options?.map((option) => (
                   <FacetedItem key={option.value} value={option.value}>

@@ -13,7 +13,6 @@ import { Separator } from "@/components/ui/separator";
 import {
   DetectiveIcon,
   TrashIcon,
-  UserGearIcon,
   UserIcon,
   UserSwitchIcon,
 } from "@phosphor-icons/react/dist/ssr";
@@ -26,7 +25,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";
 import type { User } from "./columns";

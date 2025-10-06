@@ -28,8 +28,7 @@ export const apartmentsRouter = createTRPCRouter({
 
       await db.apartment.create({
         data: {
-          isRented: input.rented,
-          isOccupied: input.occupied,
+          state: input.state,
           ownerName: input.owner.name,
           ownerPhone: input.owner.phone,
           apartmentNumber: input.apartmentNumber,
@@ -63,8 +62,7 @@ export const apartmentsRouter = createTRPCRouter({
       await db.apartment.update({
         where: { id: input.id },
         data: {
-          isRented: input.rented,
-          isOccupied: input.occupied,
+          state: input.state,
           ownerName: input.owner.name,
           ownerPhone: input.owner.phone,
           apartmentNumber: input.apartmentNumber,

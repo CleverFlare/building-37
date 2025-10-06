@@ -164,7 +164,7 @@ function FacetedBadgeList(props: FacetedBadgeListProps) {
         className="text-muted-foreground flex w-full items-center gap-1"
       >
         {placeholder}
-        <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
+        <ChevronsUpDown className="mr-auto size-4 shrink-0 opacity-50" />
       </div>
     );
   }
@@ -256,9 +256,7 @@ function FacetedItem(props: FacetedItemProps) {
       <span
         className={cn(
           "border-primary flex size-4 items-center justify-center rounded-sm border",
-          isSelected
-            ? "bg-primary text-primary-foreground"
-            : "opacity-50 [&_svg]:invisible",
+          isSelected ? "bg-primary text-white" : "opacity-50 [&_svg]:invisible",
         )}
       >
         <Check className="size-4" />
