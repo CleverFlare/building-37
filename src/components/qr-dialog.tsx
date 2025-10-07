@@ -10,6 +10,7 @@ import { PrinterIcon, QrCodeIcon } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "./ui/button";
 import QRCode from "react-qr-code";
 import { api } from "@/trpc/react";
+import { Spinner } from "./ui/spinner";
 
 export default function QrDialog({
   open,
@@ -20,7 +21,7 @@ export default function QrDialog({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   apartmentNumber: number;
 }) {
-  const { mutateAsync } = api.apartments.qrPdf.useMutation();
+  const { mutateAsync, isPending } = api.apartments.qrPdf.useMutation();
 
   async function handleQrPdfDownload(qrData: string) {
     const res = await mutateAsync([{ qrData: qrData, apartmentNumber }]);
@@ -81,8 +82,10 @@ export default function QrDialog({
           <Button
             className="w-full"
             onClick={() => handleQrPdfDownload(apartmentNumber + "")}
+            disabled={isPending}
           >
-            <PrinterIcon weight="fill" />
+            {isPending && <Spinner />}
+            {!isPending && <PrinterIcon weight="fill" />}
             طباعة
           </Button>
         </div>
