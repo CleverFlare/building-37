@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { UserRowActions } from "./user-row-actions";
 import type { Role } from "@prisma/client";
 import { format } from "date-fns";
-import { Span } from "next/dist/trace";
 import { ar } from "date-fns/locale";
+import { Chip } from "@/components/ui/chip";
+import { mapToVariant } from "@/lib/map-to-variant";
+import type { ComponentProps } from "react";
 
 export type User = {
   id: string;
@@ -64,14 +66,7 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "role",
     header: "الوظيفة",
     cell: ({ row }) => {
-      // eslint-disable-next-line
       const role = row.original.role;
-      const color =
-        role === "admin"
-          ? "bg-red-500/10 text-red-600"
-          : role === "moderator"
-            ? "bg-blue-500/10 text-blue-600"
-            : "bg-gray-500/10 text-gray-600";
 
       const arabicRoles: Record<Role, string> = {
         admin: "مسؤول النظام",
@@ -80,8 +75,23 @@ export const columns: ColumnDef<User>[] = [
       };
 
       return (
-        // eslint-disable-next-line
-        <Badge className={`${color} capitalize`}>{arabicRoles[role]}</Badge>
+        <Chip
+          variant="medium"
+          color={mapToVariant<
+            ComponentProps<typeof Chip>["color"],
+            typeof role
+          >(
+            {
+              admin: "destructive",
+              user: "warning",
+              moderator: "primary",
+            },
+            "primary",
+            role,
+          )}
+        >
+          {arabicRoles[role]}
+        </Chip>
       );
     },
   },

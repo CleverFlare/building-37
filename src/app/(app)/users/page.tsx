@@ -18,7 +18,12 @@ export default async function UsersPage({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-bold">المستخدمين</h2>
-        <p className="text-muted-foreground">قيد الإنشاء</p>
+        <p className="text-muted-foreground">
+          تتيح هذه الصفحة للمسؤول عرض وإدارة بيانات المستخدمين في النظام. يمكن
+          للمسؤول تصفح قائمة المستخدمين من خلال جدول بيانات يحتوي على معلومات
+          تفصيلية مثل الاسم، البريد الإلكتروني، والدور، مع إمكانية تعديل الأدوار
+          أو حذف المستخدمين عند الحاجة.
+        </p>
       </div>
       <UsersTable data={data} columns={columns} pageCount={pageCount} />
     </div>

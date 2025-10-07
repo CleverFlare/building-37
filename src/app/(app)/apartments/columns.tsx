@@ -2,9 +2,9 @@
 
 import DeleteApartmentDropdownItem from "@/components/delete-apartment-dropdown-item";
 import QrDialog from "@/components/qr-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Chip } from "@/components/ui/chip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { arabicStates } from "@/config/apartment-arabic-state";
+import { mapToVariant } from "@/lib/map-to-variant";
 import {
   CalendarDotsIcon,
   HouseIcon,
@@ -27,7 +28,7 @@ import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { EllipsisIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ComponentProps } from "react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -107,15 +108,22 @@ export const columns: ColumnDef<Apartment>[] = [
         original: { state },
       },
     }) => (
-      <Badge
-        variant={
-          (
-            { vacant: "ghost", occupied: "default", rented: "outline" } as const
-          )[state]
-        }
+      <Chip
+        variant={mapToVariant<
+          ComponentProps<typeof Chip>["variant"],
+          typeof state
+        >(
+          {
+            occupied: "heavy",
+            rented: "medium",
+            vacant: "light",
+          },
+          "light",
+          state,
+        )}
       >
         {arabicStates[state]}
-      </Badge>
+      </Chip>
     ),
     meta: {
       label: "حالة الشقة",
