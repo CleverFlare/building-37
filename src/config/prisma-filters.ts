@@ -91,8 +91,9 @@ export const prismaFiltersConfig: Config = {
       .transform((val) => [val])
       .pipe(z.array(z.string())),
     operators: {
-      eq: (key, value) => ({ [key]: { equals: value[0] } }),
-      ne: (key, value) => ({ [key]: { NOT: { equals: value[0] } } }),
+      eq: (key, value) => (value[0] ? { [key]: { equals: value[0] } } : {}),
+      ne: (key, value) =>
+        value[0] ? { [key]: { NOT: { equals: value[0] } } } : {},
       isEmpty: (key) => ({
         OR: [{ [key]: null }, { [key]: { equals: "" } }],
       }),

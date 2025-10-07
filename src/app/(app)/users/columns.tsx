@@ -2,7 +2,6 @@
 
 import { type ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { UserRowActions } from "./user-row-actions";
 import type { Role } from "@prisma/client";
 import { format } from "date-fns";
@@ -10,6 +9,13 @@ import { ar } from "date-fns/locale";
 import { Chip } from "@/components/ui/chip";
 import { mapToVariant } from "@/lib/map-to-variant";
 import type { ComponentProps } from "react";
+import {
+  CalendarIcon,
+  MailboxIcon,
+  PersonIcon,
+  RankingIcon,
+  UserIcon,
+} from "@phosphor-icons/react/dist/ssr";
 
 export type User = {
   id: string;
@@ -52,6 +58,32 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "username",
     header: "إسم المستخدم",
+    meta: {
+      label: "إسم المستخدم",
+      variant: "text",
+      icon: UserIcon,
+    },
+    enableColumnFilter: true,
+  },
+  {
+    accessorKey: "firstName",
+    header: "الإسم الأول",
+    meta: {
+      label: "الإسم الأول",
+      variant: "text",
+      icon: PersonIcon,
+    },
+    enableColumnFilter: true,
+  },
+  {
+    accessorKey: "lastName",
+    header: "الإسم الأخير",
+    meta: {
+      label: "الإسم الأخير",
+      variant: "text",
+      icon: PersonIcon,
+    },
+    enableColumnFilter: true,
   },
   {
     id: "name",
@@ -61,6 +93,12 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "email",
     header: "البريد الإليكتروني",
+    meta: {
+      label: "البريد الإلكتروني",
+      variant: "text",
+      icon: MailboxIcon,
+    },
+    enableColumnFilter: true,
   },
   {
     accessorKey: "role",
@@ -94,6 +132,26 @@ export const columns: ColumnDef<User>[] = [
         </Chip>
       );
     },
+    meta: {
+      label: "الوظيفة",
+      variant: "select",
+      options: [
+        {
+          label: "مسؤول النظام",
+          value: "admin",
+        },
+        {
+          label: "مدير",
+          value: "moderator",
+        },
+        {
+          label: "مستخدم",
+          value: "user",
+        },
+      ],
+      icon: RankingIcon,
+    },
+    enableColumnFilter: true,
   },
   {
     accessorKey: "createdAt",
@@ -102,6 +160,12 @@ export const columns: ColumnDef<User>[] = [
       const date = new Date(row.original.createdAt);
       return format(date, "dd MMM yyyy - mm : h aaa", { locale: ar });
     },
+    meta: {
+      label: "تاريخ الإنضمام",
+      variant: "date",
+      icon: CalendarIcon,
+    },
+    enableColumnFilter: true,
   },
 
   // Row actions (⋮ dropdown)

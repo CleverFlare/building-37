@@ -33,7 +33,8 @@ export function UsersTable<TValue>({
     shallow: false,
     initialState: {
       columnVisibility: {
-        isOccupied: false,
+        firstName: false,
+        lastName: false,
       },
     },
   });
