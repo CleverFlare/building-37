@@ -165,7 +165,7 @@ export const columns: ColumnDef<User>[] = [
       variant: "date",
       icon: CalendarIcon,
     },
-    enableColumnFilter: true,
+    // enableColumnFilter: true,
   },
 
   // Row actions (⋮ dropdown)

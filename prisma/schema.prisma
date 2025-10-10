@@ -31,9 +31,26 @@ model User {
   passwordHash String
   otpHash      String? // hashed OTP
   otpExpires   DateTime?
-  createdAt    DateTime  @default(now())
   avatarUrl    String?
   role         Role
+  createdAt    DateTime  @default(now())
+  // updateAt     DateTime  @updatedAt
+}
+
+model MonthlyFee {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // === Apartment snapshot data ===
+  apartmentNumber Int
+  ownerName       String
+  ownerPhone      String
+  occupantName    String?
+  occupantPhone   String?
+  state           State   @default(vacant)
+  // ===
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
 enum State {

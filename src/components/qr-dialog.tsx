@@ -11,6 +11,14 @@ import { Button } from "./ui/button";
 import QRCode from "react-qr-code";
 import { api } from "@/trpc/react";
 import { Spinner } from "./ui/spinner";
+import {
+  Credenza,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+} from "./ui/credenza";
 
 export default function QrDialog({
   open,
@@ -45,12 +53,8 @@ export default function QrDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setIsOpen}>
-      <DialogContent
-        showCloseButton={false}
-        className="outline-none"
-        onCloseAutoFocus={(e) => e.preventDefault()}
-      >
+    <Credenza open={open} onOpenChange={setIsOpen}>
+      <CredenzaContent className="outline-none">
         <div className="flex h-full w-full flex-col items-center gap-5">
           <span className="border-input bg-input/50 relative flex size-12 items-center justify-center overflow-hidden rounded-full border dark:bg-[#0f0f0f] dark:text-white">
             {/* Small Grid Pattern */}
@@ -67,29 +71,31 @@ export default function QrDialog({
             {/* Your Content/Components */}
             <QrCodeIcon size={25} className="z-10" />
           </span>
-          <DialogHeader>
-            <DialogTitle className="text-center text-2xl">
+          <CredenzaHeader>
+            <CredenzaTitle className="text-center text-2xl">
               رمز QR الخاص بالشقة
-            </DialogTitle>
-            <DialogDescription className="text-center">
+            </CredenzaTitle>
+            <CredenzaDescription className="text-center">
               يمكنك طباعته او تحميله بصيغة PDF من ثم مسحه عند المعاملات المالية
               لتسجيل هذه المعاملات على النظام
-            </DialogDescription>
-          </DialogHeader>
+            </CredenzaDescription>
+          </CredenzaHeader>
           <div className="flex size-[250px] items-center justify-center rounded-lg border bg-white p-3 shadow-md">
             <QRCode value={String(apartmentNumber)} className="h-full w-full" />
           </div>
-          <Button
-            className="w-full"
-            onClick={() => handleQrPdfDownload(apartmentNumber + "")}
-            disabled={isPending}
-          >
-            {isPending && <Spinner />}
-            {!isPending && <PrinterIcon weight="fill" />}
-            طباعة
-          </Button>
+          <CredenzaFooter className="w-full">
+            <Button
+              className="w-full"
+              onClick={() => handleQrPdfDownload(apartmentNumber + "")}
+              disabled={isPending}
+            >
+              {isPending && <Spinner />}
+              {!isPending && <PrinterIcon weight="fill" />}
+              طباعة
+            </Button>
+          </CredenzaFooter>
         </div>
-      </DialogContent>
-    </Dialog>
+      </CredenzaContent>
+    </Credenza>
   );
 }
