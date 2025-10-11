@@ -41,7 +41,7 @@ export function MonthlyFeesTable<TValue>({
 
   return (
     <DataTable table={table} actionBar={<TableActionBar table={table} />}>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <MonthYearPicker />
         <div className="flex items-center gap-4">
           <DataTableFilterList

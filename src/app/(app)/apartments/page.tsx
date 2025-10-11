@@ -26,10 +26,8 @@ export default async function Page({
       <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-bold">الشقق</h2>
         <p className="text-muted-foreground">
-          تتيح هذه الصفحة للمستخدم عرض وإدارة بيانات الشقق في العمارة. يمكن
-          للمستخدم تصفح قائمة الشقق من خلال جدول بيانات يحتوي على معلومات
-          تفصيلية مثل رقم الشقة، المالك، المقيم الحالي (سواء كان المالك أو
-          المستأجر).
+          تعرض الصفحة بيانات شقق العمارة وتمكّن المستخدم من إدارتها عبر جدول
+          يوضح رقم الشقة، المالك، والمقيم الحالي.
         </p>
       </div>
       <ApartmentsTable columns={columns} data={data} pageCount={pageCount} />

@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model GlobalConfig {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  monthlyFee Int
+}
+
 model Apartment {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   apartmentNumber Int
