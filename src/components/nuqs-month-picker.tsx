@@ -6,18 +6,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"; // shadcn popover
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { useQueryState, parseAsInteger } from "nuqs";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Separator } from "./ui/separator";
+import { cn } from "@/lib/utils";
 
 // Props
 export type MonthYearPickerProps = {
@@ -107,53 +101,47 @@ export default function MonthYearPicker({
           {isToday ? "الشهر والسنة الحالية" : displayLabel}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[520px]" align="start">
+      <PopoverContent className="w-[400px]" align="start">
         <div className="flex justify-between gap-2">
           <Button variant="ghost" onClick={() => setYear((prev) => --prev)}>
             <ChevronRightIcon />
           </Button>
-          <Select
-            value={typeof year === "number" ? String(year) : undefined}
-            onValueChange={(v) => setYear(Number(v))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="السنة" />
-            </SelectTrigger>
-            <SelectContent>
-              {years.map((y) => (
-                <SelectItem key={y} value={String(y)}>
-                  {y}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <span className="flex w-full items-center justify-center">
+            {year}
+          </span>
           <Button variant="ghost" onClick={() => setYear((prev) => ++prev)}>
             <ChevronLeftIcon />
           </Button>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 grid grid-cols-4 gap-2">
           {months.map((m) => (
-            <Button
-              variant={month === m.value ? "outline" : "ghost"}
+            <button
+              className={cn(
+                "h-9 rounded-md px-4 py-2 text-sm has-[>svg]:px-3",
+                month === m.value
+                  ? "bg-primary text-white"
+                  : "hover:bg-input/50",
+              )}
               key={m.value}
               onClick={() => setMonth(m.value)}
             >
               {m.label}
-            </Button>
+            </button>
           ))}
         </div>
 
-        <div className="mt-3 flex flex-col justify-end gap-2">
+        <div className="mt-3 flex flex-col justify-start gap-2">
           <Separator />
           <Button
             variant="outline"
+            className="w-max"
             onClick={async () => {
               await setYear(new Date().getFullYear());
               await setMonth(new Date().getMonth());
             }}
           >
-            الشهر والسنة الحالية
+            الإعدادات الإفتراضية
           </Button>
         </div>
       </PopoverContent>
