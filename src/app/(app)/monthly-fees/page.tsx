@@ -25,7 +25,10 @@ export default async function Page({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-bold">المصروفات الشهرية</h2>
-        <p className="text-muted-foreground">قيد الإنشاء</p>
+        <p className="text-muted-foreground">
+          تمكّن الصفحة من جمع الرسوم الشهرية من الشقق عبر رموز QR تتيح للمقيمين
+          الدفع بسهولة وسرعة.
+        </p>
       </div>
       <MonthlyFeesTable columns={columns} data={data} pageCount={pageCount} />
     </div>

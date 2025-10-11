@@ -58,7 +58,7 @@ export function AppSidebar() {
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton asChild isActive={isActive}>
                         <Link href={item.href}>
-                          <item.icon weight={isActive ? "fill" : "regular"} />
+                          <item.icon weight="duotone" />
                           <span>{item.label}</span>
                         </Link>
                       </SidebarMenuButton>
