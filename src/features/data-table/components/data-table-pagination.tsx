@@ -30,7 +30,7 @@ export function DataTablePagination<TData>({
         {table.getFilteredSelectedRowModel().rows.length} من{" "}
         {table.getFilteredRowModel().rows.length} صف/صفوف محددة.
       </div>
-      <div className="flex flex-1 flex-col items-center justify-between gap-4 min-[460px]:flex-row lg:justify-start lg:gap-8">
+      <div className="flex flex-1 flex-col items-center justify-between gap-4 min-[460px]:flex-row lg:justify-end lg:gap-8">
         <div className="flex items-center space-x-2">
           <p className="min-w-max text-sm font-medium">صفوف في الصفحة</p>
           <Select
