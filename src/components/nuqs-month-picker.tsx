@@ -95,7 +95,7 @@ export default function MonthYearPicker({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full max-w-[300px] justify-start"
+          className="max-w-[300px] flex-1 justify-start"
         >
           <CalendarIcon />
           {isToday ? "الشهر والسنة الحالية" : displayLabel}

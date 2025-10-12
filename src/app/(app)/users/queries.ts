@@ -19,7 +19,7 @@ export async function getUsers(input: GetUsersSchema) {
   let whereObject = {};
 
   if (input.name)
-    whereObject = { AND: [{ ownerName: input.name }, { ...whereClause }] };
+    whereObject = { AND: [{ username: input.name }, { ...whereClause }] };
   else whereObject = whereClause;
 
   const data = await db.user.findMany({

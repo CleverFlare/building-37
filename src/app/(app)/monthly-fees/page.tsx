@@ -16,7 +16,7 @@ export default async function Page({
 
   const validFilters = getValidFilters(params.filters);
 
-  const { data, pageCount } = await getMonthlyFees({
+  const { data, pageCount, monthlyFee } = await getMonthlyFees({
     ...params,
     filters: validFilters,
   });
@@ -30,7 +30,12 @@ export default async function Page({
           الدفع بسهولة وسرعة.
         </p>
       </div>
-      <MonthlyFeesTable columns={columns} data={data} pageCount={pageCount} />
+      <MonthlyFeesTable
+        columns={columns}
+        data={data}
+        pageCount={pageCount}
+        monthlyFee={monthlyFee ?? 50}
+      />
     </div>
   );
 }

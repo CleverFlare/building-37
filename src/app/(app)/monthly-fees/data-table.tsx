@@ -3,9 +3,7 @@
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { DataTableFilterList } from "@/features/data-table/components/data-table-filter-list";
-import NuqsSearchInput from "@/components/nuqs-search-input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { QrCodeIcon } from "@phosphor-icons/react/dist/ssr";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/features/data-table/components/data-table";
@@ -13,6 +11,7 @@ import { useDataTable } from "@/features/data-table/hooks/use-data-table";
 import { TableActionBar } from "./action-bar";
 import type { MonthlyFee } from "./columns";
 import MonthYearPicker from "@/components/nuqs-month-picker";
+import MonthlyFeeDialog from "@/components/monthly-fee-dialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -24,7 +23,8 @@ export function MonthlyFeesTable<TValue>({
   columns,
   data,
   pageCount,
-}: DataTableProps<MonthlyFee, TValue>) {
+  monthlyFee,
+}: DataTableProps<MonthlyFee, TValue> & { monthlyFee: number }) {
   const { table, shallow, debounceMs, throttleMs } = useDataTable({
     pageCount,
     data,
@@ -42,7 +42,10 @@ export function MonthlyFeesTable<TValue>({
   return (
     <DataTable table={table} actionBar={<TableActionBar table={table} />}>
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <MonthYearPicker />
+        <div className="flex flex-1 items-center gap-2">
+          <MonthlyFeeDialog value={monthlyFee} />
+          <MonthYearPicker />
+        </div>
         <div className="flex items-center gap-4">
           <DataTableFilterList
             table={table}

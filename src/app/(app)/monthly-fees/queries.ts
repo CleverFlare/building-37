@@ -5,6 +5,7 @@ import {
   type Filter,
 } from "@/features/data-table/lib/filters-prisma-where";
 import type { Prisma } from "@prisma/client";
+import { endOfDay, startOfDay } from "date-fns";
 
 export async function getMonthlyFees(input: GetMonthlyFeesSchema) {
   const whereClause = filtersToPrismaWhere<Prisma.MonthlyFeeWhereInput>(
@@ -18,8 +19,22 @@ export async function getMonthlyFees(input: GetMonthlyFeesSchema) {
 
   let whereObject = {};
 
+  const thisMonthStart = new Date(input.year, input.month, 1);
+
+  const thisMonthEnd = new Date(input.year, input.month + 1, 0);
+
   if (input.name)
-    whereObject = { AND: [{ ownerName: input.name }, { ...whereClause }] };
+    whereObject = {
+      AND: [
+        {
+          createdAt: {
+            lt: startOfDay(thisMonthStart),
+            gt: endOfDay(thisMonthEnd),
+          },
+        },
+        { ...whereClause },
+      ],
+    };
   else whereObject = whereClause;
 
   const data = await db.monthlyFee.findMany({
@@ -33,7 +48,9 @@ export async function getMonthlyFees(input: GetMonthlyFeesSchema) {
     where: whereObject,
   });
 
+  const globalValue = await db.globalConfig.findFirst({});
+
   const totalPages = Math.ceil(total / input.perPage);
 
-  return { data, pageCount: totalPages };
+  return { data, pageCount: totalPages, monthlyFee: globalValue?.monthlyFee };
 }

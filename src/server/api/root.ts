@@ -4,6 +4,7 @@ import { ar } from "zod/v4/locales";
 import { apartmentsRouter } from "./routers/apartments/router";
 import { authRouter } from "./routers/auth/router";
 import { usersRouter } from "./routers/users/router";
+import { monthlyFeesRouter } from "./routers/monthly-fees/router";
 
 z.config(ar());
 
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   apartments: apartmentsRouter,
   auth: authRouter,
   users: usersRouter,
+  monthlyFees: monthlyFeesRouter,
 });
 
 // export type definition of API

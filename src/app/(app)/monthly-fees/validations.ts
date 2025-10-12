@@ -22,6 +22,8 @@ export const searchParamsCache = createSearchParamsCache({
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
   name: parseAsString.withDefault(""),
+  month: parseAsInteger.withDefault(new Date().getMonth()),
+  year: parseAsInteger.withDefault(new Date().getFullYear()),
 });
 
 export type GetMonthlyFeesSchema = Awaited<

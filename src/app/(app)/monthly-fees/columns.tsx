@@ -24,6 +24,7 @@ export type MonthlyFee = {
   ownerPhone: string;
   occupantName: string | null;
   occupantPhone: string | null;
+  paidAmount: number;
   state: State;
   createdAt: Date;
 };
@@ -55,6 +56,15 @@ export const columns: ColumnDef<MonthlyFee>[] = [
       </div>
     ),
     size: 10,
+  },
+  {
+    accessorKey: "paidAmount",
+    header: "المبلغ المدفوع",
+    accessorFn: ({ paidAmount }) =>
+      new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "EGP",
+      }).format(paidAmount),
   },
   {
     accessorKey: "apartmentNumber",

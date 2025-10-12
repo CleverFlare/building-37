@@ -54,6 +54,8 @@ model MonthlyFee {
   state           State   @default(vacant)
   // ===
 
+  paidAmount Int
+
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 }
