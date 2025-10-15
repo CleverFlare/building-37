@@ -12,6 +12,7 @@ import { TableActionBar } from "./action-bar";
 import type { MonthlyFee } from "./columns";
 import MonthYearPicker from "@/components/nuqs-month-picker";
 import MonthlyFeeDialog from "@/components/monthly-fee-dialog";
+import QrScanDialog from "@/components/qr-scan-dialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -57,10 +58,12 @@ export function MonthlyFeesTable<TValue>({
             orientation="vertical"
             className="data-[orientation=vertical]:h-5"
           />
-          <Button>
-            <QrCodeIcon />
-            مسح رمز QR
-          </Button>
+          <QrScanDialog>
+            <Button>
+              <QrCodeIcon />
+              مسح رمز QR
+            </Button>
+          </QrScanDialog>
         </div>
       </div>
     </DataTable>

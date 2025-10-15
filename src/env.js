@@ -11,6 +11,10 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    DEFAULT_MONTHLY_FEE: z
+      .string()
+      .transform((v) => +v)
+      .pipe(z.int()),
     JWT_PRIVATE: z.string(),
     GMAIL_USER: z.string(),
     GMAIL_PASS: z.string(),
@@ -40,6 +44,7 @@ export const env = createEnv({
     GMAIL_USER: process.env.GMAIL_USER,
     GMAIL_PASS: process.env.GMAIL_PASS,
     PASSWORD_SALT: process.env.PASSWORD_SALT,
+    DEFAULT_MONTHLY_FEE: process.env.DEFAULT_MONTHLY_FEE,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

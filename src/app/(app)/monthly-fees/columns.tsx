@@ -16,6 +16,7 @@ import type { ComponentProps } from "react";
 import { arabicStates } from "@/config/apartment-arabic-state";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
+import { RowActions } from "./row-actions";
 
 export type MonthlyFee = {
   id: string;
@@ -203,5 +204,9 @@ export const columns: ColumnDef<MonthlyFee>[] = [
       icon: CalendarDotsIcon,
     },
     enableColumnFilter: true,
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <RowActions id={row.original.id} />,
   },
 ];
