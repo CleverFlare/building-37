@@ -6,6 +6,7 @@ import {
 } from "@/features/data-table/lib/filters-prisma-where";
 import type { Prisma } from "@prisma/client";
 import { endOfDay, startOfDay } from "date-fns";
+import { getGlobalValue } from "@/lib/global-values";
 
 export async function getMonthlyFees(input: GetMonthlyFeesSchema) {
   const whereClause = filtersToPrismaWhere<Prisma.MonthlyFeeWhereInput>(
@@ -28,8 +29,8 @@ export async function getMonthlyFees(input: GetMonthlyFeesSchema) {
       AND: [
         {
           createdAt: {
-            lt: startOfDay(thisMonthStart),
-            gt: endOfDay(thisMonthEnd),
+            gt: startOfDay(thisMonthStart),
+            lt: endOfDay(thisMonthEnd),
           },
         },
         { ...whereClause },
@@ -48,9 +49,9 @@ export async function getMonthlyFees(input: GetMonthlyFeesSchema) {
     where: whereObject,
   });
 
-  const globalValue = await db.globalConfig.findFirst({});
+  const monthlyFee = await getGlobalValue("monthlyFee");
 
   const totalPages = Math.ceil(total / input.perPage);
 
-  return { data, pageCount: totalPages, monthlyFee: globalValue?.monthlyFee };
+  return { data, pageCount: totalPages, monthlyFee };
 }

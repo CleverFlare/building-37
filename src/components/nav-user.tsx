@@ -50,14 +50,14 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-input/50 data-[state=open]:text-sidebar-foreground bg-card border shadow-xs"
+              className="data-[state=open]:bg-input/50 data-[state=open]:text-sidebar-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="bg-background h-8 w-8 rounded-md">
                 <AvatarImage
                   src={user?.avatarUrl ?? undefined}
                   alt={user?.firstName}
                 />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-md">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-right text-sm leading-tight">
                 <span className="truncate font-medium">

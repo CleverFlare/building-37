@@ -1,24 +1,112 @@
+import { BalanceChangeStat } from "@/components/balance-change-stat";
+import { CollectedStat } from "@/components/collected-stat";
 import StatCard from "@/components/stat-card";
+import { cumulative } from "@/lib/cumulative-map";
+import { getGlobalValue } from "@/lib/global-values";
+import { db } from "@/server/db";
 import {
-  MoneyIcon,
-  UsersThreeIcon,
-  VaultIcon,
+  BankIcon,
+  BuildingIcon,
+  CoinsIcon,
+  UsersIcon,
 } from "@phosphor-icons/react/dist/ssr";
+import { endOfDay, startOfDay } from "date-fns";
 
-export default function Page() {
+export default async function Page() {
+  const monthlyFee = await getGlobalValue("monthlyFee");
+
+  const today = new Date();
+
+  const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  const monthlyFees = await db.monthlyFee.findMany({
+    where: {
+      createdAt: { gt: startOfDay(thisMonthStart), lt: endOfDay(thisMonthEnd) },
+    },
+  });
+
+  const totalMonthlyFees = monthlyFees.reduce(
+    (prev, next) => prev + next.paidAmount,
+    0,
+  );
+
+  const apartmentsCount = await db.apartment.count();
+
+  const totalDueMonthlyFees = apartmentsCount * (monthlyFee ?? 1);
+
+  const dueMonthlyFeePercentage = Math.floor(
+    (totalMonthlyFees / totalDueMonthlyFees) * 100,
+  );
+
+  const balances = await db.balance.findMany({
+    where: { year: new Date().getFullYear() },
+  });
+
+  const totalBalance = balances.reduce((prev, next) => prev + next.amount, 0);
+
+  const cumulativeBalances = cumulative(
+    balances.map((balance) => balance.amount),
+  );
+
+  const monthlyBalances = new Array(12).fill(0).map((_, index) => {
+    const balanceIndex = balances.findIndex(
+      (balance) => balance.month === index,
+    );
+
+    if (balanceIndex === -1) return 0;
+
+    return cumulativeBalances[balanceIndex];
+  });
+
   return (
     <div className="flex flex-col gap-5">
       <h2 className="text-3xl font-bold">مرحباً بك يا، محمد</h2>
-      <div className="grid grid-cols-3 gap-4">
-        <StatCard title="المبلغ المحصل هذا الشهر" value="200 جنية">
-          <MoneyIcon size={30} className="text-green-500" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <StatCard
+          title="المصروف الشهري للشقة"
+          value={`${monthlyFee} جنية`}
+          icon={<CoinsIcon />}
+        >
+          <p className="text-muted-foreground text-sm">
+            المبلغ المطلوب من الشقة الواحدة كل شهر
+          </p>
         </StatCard>
-        <StatCard title="عدد الشقق التي دفعت هذا الشهر" value="10 شقق">
-          <UsersThreeIcon size={30} />
+        <StatCard
+          title="نسبة التحصيل"
+          value={`${dueMonthlyFeePercentage}%`}
+          icon={<UsersIcon />}
+        >
+          <p className="text-muted-foreground text-sm">
+            نسبة المصروفات الشهرية المحصلة هذا الشهر
+          </p>
         </StatCard>
-        <StatCard title="إجمالي الديون المستحقة" value="200 جنية">
-          <VaultIcon size={30} className="text-destructive" />
+        <StatCard
+          title="الشقق المحصله"
+          value={`${monthlyFees.length} شقق`}
+          icon={<BuildingIcon />}
+        >
+          <p className="text-muted-foreground text-sm">
+            الشقق التي دفعت المصروف الشهري هذا الشهر
+          </p>
         </StatCard>
+        <StatCard
+          title="الميزانية الحالية"
+          value={`${totalBalance} جنية`}
+          icon={<BankIcon />}
+        >
+          <p className="text-muted-foreground text-sm">
+            إجماعلي اموال العمارة المحصلة بمختلف الطرق
+          </p>
+        </StatCard>
+      </div>
+      <div className="grid flex-1 grid-cols-1 gap-4 xl:grid-cols-[1fr_2fr]">
+        <CollectedStat
+          collected={monthlyFees.length}
+          uncollected={apartmentsCount - monthlyFees.length}
+        />
+        <BalanceChangeStat balances={cumulative(monthlyBalances as number[])} />
       </div>
     </div>
   );

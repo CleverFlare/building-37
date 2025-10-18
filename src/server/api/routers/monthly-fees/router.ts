@@ -2,23 +2,13 @@ import { z } from "zod/v4";
 import { createTRPCRouter, roleProcedure } from "../../trpc";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
+import { setGlobalValue } from "@/lib/global-values";
 
 export const monthlyFeesRouter = createTRPCRouter({
   setMonthlyFee: roleProcedure(["admin"])
     .input(z.object({ monthlyFee: z.int() }))
-    .mutation(async ({ input, ctx }) => {
-      const isGlobalSet = await ctx.db.globalConfig.findFirst();
-
-      if (!isGlobalSet) {
-        await ctx.db.globalConfig.create({
-          data: { monthlyFee: input.monthlyFee },
-        });
-      } else {
-        await ctx.db.globalConfig.update({
-          where: { id: isGlobalSet.id },
-          data: { monthlyFee: input.monthlyFee },
-        });
-      }
+    .mutation(async ({ input }) => {
+      await setGlobalValue("monthlyFee", input.monthlyFee);
     }),
 
   scanApartment: roleProcedure(["admin"])
@@ -88,13 +78,42 @@ export const monthlyFeesRouter = createTRPCRouter({
           paidAmount: monthlyFee,
         },
       });
+
+      const today = new Date();
+
+      // eslint-disable-next-line
+      await ctx.db.balance.upsert({
+        where: { year: today.getFullYear() },
+        update: { amount: { increment: monthlyFee } },
+        create: {
+          year: today.getFullYear(),
+          month: today.getMonth(),
+          amount: monthlyFee,
+        },
+      });
     }),
   delete: roleProcedure(["admin"])
     .input(z.object({ ids: z.array(z.string()) }))
     .mutation(async ({ input, ctx }) => {
       for (const id of input.ids) {
         try {
-          await ctx.db.monthlyFee.delete({ where: { id: id } });
+          const record = await ctx.db.monthlyFee.findUnique({ where: { id } });
+
+          if (!record) continue;
+
+          await ctx.db.monthlyFee.delete({ where: { id } });
+
+          const today = new Date();
+
+          await ctx.db.balance.upsert({
+            where: { year: today.getFullYear() },
+            update: { amount: { decrement: record.paidAmount } },
+            create: {
+              year: today.getFullYear(),
+              month: today.getMonth(),
+              amount: 0,
+            },
+          });
         } catch {
           throw new TRPCError({
             code: "UNPROCESSABLE_CONTENT",

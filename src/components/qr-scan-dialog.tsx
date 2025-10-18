@@ -13,14 +13,14 @@ import {
 } from "./ui/credenza";
 import { Button } from "./ui/button";
 import { WarningIcon } from "@phosphor-icons/react/dist/ssr";
-import { Scanner } from "@yudiel/react-qr-scanner";
 import { useIsClient } from "@uidotdev/usehooks";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Scanner } from "@yudiel/react-qr-scanner";
 
 export default function QrScanDialog({ children }: { children: ReactNode }) {
-  const [isCameraAvailable, setIsCameraAvailable] = useState(false);
+  const [isCameraAvailable, setIsCameraAvailable] = useState(true);
 
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
@@ -29,15 +29,19 @@ export default function QrScanDialog({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function checkCameraAvailability() {
       if (isClient) {
-        const media = await navigator.mediaDevices.getUserMedia({
-          video: true,
-        });
+        try {
+          const media = await navigator?.mediaDevices?.getUserMedia({
+            video: true,
+          });
 
-        setIsCameraAvailable(media.active);
+          setIsCameraAvailable(media?.active);
+        } catch {
+          setIsCameraAvailable(false);
+        }
       }
     }
 
-    void checkCameraAvailability();
+    if (isClient) void checkCameraAvailability();
   }, [isClient]);
 
   const router = useRouter();
@@ -77,7 +81,7 @@ export default function QrScanDialog({ children }: { children: ReactNode }) {
               </h2>
               <p className="text-muted-foreground text-center text-balance">
                 حدثت مشكلة في محاولة الوصول للكاميرا، الرجاء التأكد من وجود
-                كاميرا
+                كاميرا.
               </p>
             </div>
           )}

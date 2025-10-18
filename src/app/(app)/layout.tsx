@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import type { ReactNode } from "react";
 
-export default function Layout({
+export default async function Layout({
   children,
   breadcrumb,
 }: {

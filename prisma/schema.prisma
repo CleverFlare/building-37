@@ -12,7 +12,7 @@ datasource db {
 
 model GlobalConfig {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
-  monthlyFee Int
+  monthlyFee Int    @default(50)
 }
 
 model Apartment {
@@ -58,6 +58,15 @@ model MonthlyFee {
 
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
+}
+
+model Balance {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  year  Int @unique
+  month Int @unique
+
+  amount Int
 }
 
 enum State {
