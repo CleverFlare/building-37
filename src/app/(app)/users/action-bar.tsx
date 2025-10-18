@@ -40,8 +40,7 @@ export function TableActionBar({ table }: UsersTableActionBarProps) {
   const { mutateAsync: deleteUsers, isPending: deleting } =
     api.users.deleteMany.useMutation();
 
-  const { mutateAsync: updateRole, isPending: updatingRole } =
-    api.users.updateRole.useMutation();
+  const { mutateAsync: updateRole } = api.users.updateRole.useMutation();
 
   async function handleDeleteSelected() {
     if (rows.length === 0) return;

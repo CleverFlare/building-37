@@ -76,9 +76,8 @@ export function UserForm({
   });
 
   async function submit(data: UserSchema) {
-    console.log("Hi there");
-    if (id) await mutateAsync({ ...data, id });
-    else await mutateAsync({ ...data, id: id! });
+    if (id) await mutateAsync({ password: "", ...data, id });
+    else await mutateAsync({ password: "", ...data, id: id! });
   }
 
   return (

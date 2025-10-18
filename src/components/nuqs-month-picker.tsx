@@ -69,6 +69,7 @@ export default function MonthYearPicker({
   }, [selectedDate, currentYear]);
 
   // generate years range
+  // eslint-disable-next-line
   const years = useMemo(() => {
     const arr: number[] = [];
     for (let y = upper; y >= lower; y--) arr.push(y);

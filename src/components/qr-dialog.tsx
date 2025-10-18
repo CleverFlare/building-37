@@ -1,11 +1,4 @@
 import { type Dispatch, type SetStateAction } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
 import { PrinterIcon, QrCodeIcon } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "./ui/button";
 import QRCode from "react-qr-code";
