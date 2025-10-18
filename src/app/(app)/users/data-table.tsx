@@ -5,13 +5,13 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { DataTableFilterList } from "@/features/data-table/components/data-table-filter-list";
 import NuqsSearchInput from "@/components/nuqs-search-input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/features/data-table/components/data-table";
 import { useDataTable } from "@/features/data-table/hooks/use-data-table";
 import { TableActionBar } from "./action-bar";
 import type { User } from "./columns";
+import { UserForm } from "./user-form";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -54,12 +54,12 @@ export function UsersTable<TValue>({
             orientation="vertical"
             className="data-[orientation=vertical]:h-5"
           />
-          <Button asChild>
-            <Link href="/apartments/add">
+          <UserForm>
+            <Button>
               <PlusIcon />
               إضافة
-            </Link>
-          </Button>
+            </Button>
+          </UserForm>
         </div>
       </div>
     </DataTable>

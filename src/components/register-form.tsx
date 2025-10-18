@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ const registerSchema = z.object({
   lastName: z.string().min(1, "الإسم الأخير مطلوب"),
   username: z.string().min(3, "إسم المستخدم يجب أن يكون 3 أحرف على الأقل"),
   password: z.string().min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل"),
-  email: z.string().email("البريد الإلكتروني غير صالح"),
+  email: z.email("البريد الإلكتروني غير صالح"),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;

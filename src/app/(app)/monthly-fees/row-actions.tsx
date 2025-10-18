@@ -24,6 +24,7 @@ export function RowActions({ id }: { id: string }) {
       variant="destructive"
       onClick={() => handleDelete()}
       disabled={isPending}
+      size="icon"
     >
       <TrashIcon />
     </Button>

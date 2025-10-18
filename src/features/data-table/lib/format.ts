@@ -11,8 +11,7 @@ export function formatDate(
       year: opts.year ?? "numeric",
       ...opts,
     }).format(new Date(date));
-    // eslint-disable-next-line
-  } catch (_err) {
+  } catch {
     return "";
   }
 }

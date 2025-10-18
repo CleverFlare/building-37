@@ -61,7 +61,6 @@ export function TableActionBar({ table }: UsersTableActionBarProps) {
       await updateRole(
         rows.map((row) => ({
           id: row.original.id,
-          // eslint-disable-next-line
           role,
         })),
       );

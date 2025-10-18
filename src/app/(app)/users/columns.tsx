@@ -171,6 +171,9 @@ export const columns: ColumnDef<User>[] = [
   // Row actions (⋮ dropdown)
   {
     id: "actions",
-    cell: ({ row }) => <UserRowActions user={row.original} />,
+    cell: ({ row }) =>
+      row.original.role !== "admin" ? (
+        <UserRowActions user={row.original} />
+      ) : null,
   },
 ];

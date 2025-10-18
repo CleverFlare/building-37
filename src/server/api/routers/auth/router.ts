@@ -1,5 +1,5 @@
 // server/auth.router.ts
-import { z } from "zod";
+import { z } from "zod/v4";
 import bcrypt from "bcrypt";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 import { createJwt } from "@/lib/create-jwt";
@@ -28,7 +28,7 @@ export const authRouter = createTRPCRouter({
         firstName: z.string().min(1),
         lastName: z.string().min(1),
         username: z.string().min(3),
-        email: z.string().email(),
+        email: z.email(),
         password: z.string().min(8),
       }),
     )

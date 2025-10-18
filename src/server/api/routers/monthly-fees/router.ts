@@ -81,7 +81,6 @@ export const monthlyFeesRouter = createTRPCRouter({
 
       const today = new Date();
 
-      // eslint-disable-next-line
       await ctx.db.balance.upsert({
         where: { year: today.getFullYear() },
         update: { amount: { increment: monthlyFee } },
