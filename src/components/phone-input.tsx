@@ -43,7 +43,7 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
           // eslint-disable-next-line
           value={value || undefined}
           numberInputProps={{
-            dir: "ltr",
+            dir: "rtl",
             style: { unicodeBidi: "plaintext", textAlign: "right" },
           }}
           /**
