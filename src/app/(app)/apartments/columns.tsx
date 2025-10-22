@@ -15,12 +15,14 @@ import { arabicStates } from "@/config/apartment-arabic-state";
 import { mapToVariant } from "@/lib/map-to-variant";
 import {
   CalendarDotsIcon,
+  DoorIcon,
   HouseIcon,
   PenIcon,
   PhoneIcon,
   QrCodeIcon,
   SlidersHorizontalIcon,
   TextIndentIcon,
+  UserIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import type { State } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -68,6 +70,9 @@ export const columns: ColumnDef<Apartment>[] = [
       </div>
     ),
     size: 10,
+    meta: {
+      mobileType: "select",
+    },
   },
   {
     accessorKey: "apartmentNumber",
@@ -75,13 +80,17 @@ export const columns: ColumnDef<Apartment>[] = [
     meta: {
       label: "رقم الشقة",
       variant: "number",
-      icon: SlidersHorizontalIcon,
+      icon: DoorIcon,
     },
     enableColumnFilter: true,
   },
   {
     accessorKey: "ownerName",
     header: "إسم المالك",
+    meta: {
+      mobileType: "title",
+      icon: UserIcon,
+    },
   },
   {
     accessorKey: "ownerPhone",
@@ -90,6 +99,7 @@ export const columns: ColumnDef<Apartment>[] = [
       label: "رقم هاتف المالك",
       variant: "text",
       icon: PhoneIcon,
+      mobileType: "description",
     },
     enableColumnFilter: true,
     cell: ({
@@ -163,7 +173,7 @@ export const columns: ColumnDef<Apartment>[] = [
       label: "إسم الساكن",
       placeholder: "بحث في إسم الساكن...",
       variant: "text",
-      icon: TextIndentIcon,
+      icon: UserIcon,
     },
     enableColumnFilter: true,
   },
@@ -254,5 +264,9 @@ export const columns: ColumnDef<Apartment>[] = [
       );
     },
     size: 30,
+
+    meta: {
+      mobileType: "action",
+    },
   },
 ];

@@ -1,100 +1,20 @@
-import { flexRender, type Table as TanstackTable } from "@tanstack/react-table";
-import type * as React from "react";
-
-import { DataTablePagination } from "./data-table-pagination";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { getCommonPinningStyles } from "@/features/data-table/lib/data-table";
-import { cn } from "@/lib/utils";
+import { type Table as TanstackTable } from "@tanstack/react-table";
+import * as React from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileDataTable } from "./mobile-data-table";
+import { DesktopDataTable } from "./desktop-data-table";
 
 interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   table: TanstackTable<TData>;
   actionBar?: React.ReactNode;
 }
 
-export function DataTable<TData>({
-  table,
-  actionBar,
-  children,
-  className,
-  ...props
-}: DataTableProps<TData>) {
-  return (
-    <div className={cn("flex w-full flex-col gap-4", className)} {...props}>
-      {children}
-      <div className="overflow-hidden rounded-lg border">
-        <Table>
-          <TableHeader className="bg-muted sticky">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    style={{
-                      ...getCommonPinningStyles({ column: header.column }),
-                    }}
-                    className="text-muted-foreground"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      style={{
-                        ...getCommonPinningStyles({ column: cell.column }),
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={table.getAllColumns().length}
-                  className="h-24 text-center"
-                >
-                  لا يوجد نتائج.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex flex-col gap-2.5">
-        <DataTablePagination table={table} />
-        {actionBar &&
-          table.getFilteredSelectedRowModel().rows.length > 0 &&
-          actionBar}
-      </div>
-    </div>
-  );
+export function DataTable<TData>(props: DataTableProps<TData>) {
+  const isMobile = useIsMobile();
+
+  if (isMobile === undefined) return null;
+
+  if (isMobile) return <MobileDataTable {...props} />;
+
+  return <DesktopDataTable {...props} />;
 }

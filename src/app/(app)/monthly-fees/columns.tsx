@@ -5,10 +5,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { State } from "@prisma/client";
 import {
   CalendarDotsIcon,
+  CoinsIcon,
+  DoorIcon,
   HouseIcon,
   PhoneIcon,
-  SlidersHorizontalIcon,
-  TextIndentIcon,
+  UserIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { Chip } from "@/components/ui/chip";
 import { mapToVariant } from "@/lib/map-to-variant";
@@ -57,6 +58,9 @@ export const columns: ColumnDef<MonthlyFee>[] = [
       </div>
     ),
     size: 10,
+    meta: {
+      mobileType: "select",
+    },
   },
   {
     accessorKey: "paidAmount",
@@ -66,6 +70,10 @@ export const columns: ColumnDef<MonthlyFee>[] = [
         style: "currency",
         currency: "EGP",
       }).format(paidAmount),
+    meta: {
+      icon: CoinsIcon,
+      mobileType: "title",
+    },
   },
   {
     accessorKey: "apartmentNumber",
@@ -73,13 +81,16 @@ export const columns: ColumnDef<MonthlyFee>[] = [
     meta: {
       label: "رقم الشقة",
       variant: "number",
-      icon: SlidersHorizontalIcon,
+      icon: DoorIcon,
     },
     enableColumnFilter: true,
   },
   {
     accessorKey: "ownerName",
     header: "إسم المالك",
+    meta: {
+      icon: UserIcon,
+    },
   },
   {
     accessorKey: "ownerPhone",
@@ -161,7 +172,7 @@ export const columns: ColumnDef<MonthlyFee>[] = [
       label: "إسم الساكن",
       placeholder: "بحث في إسم الساكن...",
       variant: "text",
-      icon: TextIndentIcon,
+      icon: UserIcon,
     },
     enableColumnFilter: true,
   },
@@ -202,11 +213,15 @@ export const columns: ColumnDef<MonthlyFee>[] = [
       label: "تاريخ الإضافة",
       variant: "date",
       icon: CalendarDotsIcon,
+      mobileType: "description",
     },
     enableColumnFilter: true,
   },
   {
     id: "actions",
     cell: ({ row }) => <RowActions id={row.original.id} />,
+    meta: {
+      mobileType: "action",
+    },
   },
 ];

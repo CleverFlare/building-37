@@ -11,8 +11,9 @@ import { mapToVariant } from "@/lib/map-to-variant";
 import type { ComponentProps } from "react";
 import {
   CalendarIcon,
+  EnvelopeIcon,
+  IdentificationCardIcon,
   MailboxIcon,
-  PersonIcon,
   RankingIcon,
   UserIcon,
 } from "@phosphor-icons/react/dist/ssr";
@@ -54,14 +55,19 @@ export const columns: ColumnDef<User>[] = [
       </div>
     ),
     size: 10,
+    meta: {
+      mobileType: "select",
+    },
   },
   {
     accessorKey: "username",
     header: "إسم المستخدم",
+    accessorFn: ({ username }) => `${username}@`,
     meta: {
       label: "إسم المستخدم",
       variant: "text",
-      icon: UserIcon,
+      icon: IdentificationCardIcon,
+      mobileType: "description",
     },
     enableColumnFilter: true,
   },
@@ -79,6 +85,10 @@ export const columns: ColumnDef<User>[] = [
     id: "name",
     header: "الإسم",
     cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
+    meta: {
+      mobileType: "title",
+      icon: UserIcon,
+    },
   },
   {
     accessorKey: "email",
@@ -86,7 +96,7 @@ export const columns: ColumnDef<User>[] = [
     meta: {
       label: "البريد الإلكتروني",
       variant: "text",
-      icon: MailboxIcon,
+      icon: EnvelopeIcon,
     },
     enableColumnFilter: true,
   },
@@ -140,6 +150,7 @@ export const columns: ColumnDef<User>[] = [
         },
       ],
       icon: RankingIcon,
+      mobileType: "action",
     },
     enableColumnFilter: true,
   },

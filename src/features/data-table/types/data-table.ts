@@ -13,6 +13,7 @@ declare module "@tanstack/react-table" {
     range?: [number, number];
     unit?: string;
     icon?: React.FC<React.SVGProps<SVGSVGElement>>;
+    mobileType?: "title" | "description" | "action" | "default" | "select";
   }
 }
 
