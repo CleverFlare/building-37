@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { getCommonPinningStyles } from "@/features/data-table/lib/data-table";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   table: TanstackTable<TData>;
@@ -26,11 +27,11 @@ export function DataTable<TData>({
   ...props
 }: DataTableProps<TData>) {
   return (
-    <div className={cn("flex w-full flex-col gap-2.5", className)} {...props}>
+    <div className={cn("flex w-full flex-col gap-4", className)} {...props}>
       {children}
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-hidden rounded-lg border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted sticky">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -40,6 +41,7 @@ export function DataTable<TData>({
                     style={{
                       ...getCommonPinningStyles({ column: header.column }),
                     }}
+                    className="text-muted-foreground"
                   >
                     {header.isPlaceholder
                       ? null

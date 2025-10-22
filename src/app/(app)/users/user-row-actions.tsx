@@ -97,7 +97,7 @@ export function UserRowActions({ user }: { user: User }) {
             onClick={() => setOpenTransferAlert(true)}
             variant="destructive"
           >
-            <ArrowClockwiseIcon /> تحويل لمدير
+            <ArrowClockwiseIcon /> تحويل لمسؤول النظام
           </DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"

@@ -21,15 +21,16 @@ import { ar } from "zod/v4/locales";
 import { cn } from "@/lib/utils";
 import Logo from "./logo";
 import { useAuth } from "@/stores/auth";
+import type { ComponentProps } from "react";
 
 z.config(ar());
 
-export function AppSidebar() {
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const user = useAuth((state) => state.user);
   const pathname = usePathname();
 
   return (
-    <Sidebar side="right">
+    <Sidebar side="right" collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center gap-2 pt-2">
@@ -56,9 +57,16 @@ export function AppSidebar() {
 
                   return (
                     <SidebarMenuItem key={item.id}>
-                      <SidebarMenuButton asChild isActive={isActive}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        className="data-[slot=sidebar-menu-button]:!p-1.5"
+                      >
                         <Link href={item.href}>
-                          <item.icon weight="duotone" />
+                          <item.icon
+                            weight="duotone"
+                            className={cn(isActive ? "text-primary" : "")}
+                          />
                           <span>{item.label}</span>
                         </Link>
                       </SidebarMenuButton>

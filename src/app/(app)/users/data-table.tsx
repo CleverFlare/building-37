@@ -42,7 +42,7 @@ export function UsersTable<TValue>({
   return (
     <DataTable table={table} actionBar={<TableActionBar table={table} />}>
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <NuqsSearchInput placeholder="بحث في إسم المستخدم..." />
+        <NuqsSearchInput placeholder="البحث في الأسماء..." />
         <div className="flex items-center gap-4">
           <DataTableFilterList
             table={table}

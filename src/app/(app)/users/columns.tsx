@@ -68,21 +68,11 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "firstName",
     header: "الإسم الأول",
-    meta: {
-      label: "الإسم الأول",
-      variant: "text",
-      icon: PersonIcon,
-    },
     enableColumnFilter: true,
   },
   {
     accessorKey: "lastName",
     header: "الإسم الأخير",
-    meta: {
-      label: "الإسم الأخير",
-      variant: "text",
-      icon: PersonIcon,
-    },
     enableColumnFilter: true,
   },
   {

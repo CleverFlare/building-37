@@ -31,7 +31,7 @@ export default async function RootLayout({
       dir="rtl"
       suppressHydrationWarning
     >
-      <body>
+      <body className="bg-sidebar">
         <NuqsAdapter>
           <ThemeProvider
             attribute="class"

@@ -19,7 +19,7 @@ export default function Error() {
             <EmptyHeader>
               <EmptyMedia
                 variant="icon"
-                className="bg-background text-destructive"
+                className="text-destructive bg-red-200 dark:bg-red-900"
               >
                 <SmileyXEyesIcon />
               </EmptyMedia>
