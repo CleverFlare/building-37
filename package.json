@@ -64,17 +64,18 @@
     "lucide-react": "^0.535.0",
     "motion": "^12.23.12",
     "nanoid": "^5.1.5",
-    "next": "^15.2.3",
+    "next": "16.0.0",
     "next-themes": "^0.4.6",
+    "nextjs-toploader": "^3.9.17",
     "nodemailer": "^7.0.6",
     "nuqs": "^2.5.0",
     "pdf-lib": "^1.17.1",
     "puppeteer-core": "^24.18.0",
     "qrcode": "^1.5.4",
-    "react": "^19.0.0",
+    "react": "19.2.0",
     "react-aria-components": "^1.13.0",
     "react-day-picker": "^9.9.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "19.2.0",
     "react-hook-form": "^7.62.0",
     "react-phone-number-input": "^3.4.12",
     "react-qr-code": "^2.0.18",
@@ -90,7 +91,6 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.0.15",
     "@types/bcrypt": "^6.0.0",
     "@types/html2pdf.js": "^0.10.0",
@@ -98,10 +98,10 @@
     "@types/node": "^20.14.10",
     "@types/nodemailer": "^7.0.1",
     "@types/qrcode": "^1.5.5",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "eslint": "^9.23.0",
-    "eslint-config-next": "^15.2.3",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "^16.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
@@ -114,5 +114,9 @@
   "ct3aMetadata": {
     "initVersion": "7.39.3"
   },
-  "packageManager": "npm@11.0.0"
+  "packageManager": "npm@11.0.0",
+  "overrides": {
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2"
+  }
 }

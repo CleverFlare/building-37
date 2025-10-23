@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "@/components/ui/sonner";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "37 Building System",
@@ -32,6 +33,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-sidebar">
+        <NextTopLoader showSpinner={false} />
         <NuqsAdapter>
           <ThemeProvider
             attribute="class"

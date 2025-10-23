@@ -1,5 +1,5 @@
-import { chain } from "./middlewares/chain";
-import withAuth from "./middlewares/with-auth";
+import { chain } from "./proxies/chain";
+import withAuth from "./proxies/with-auth";
 
 export default chain([withAuth]);
 
