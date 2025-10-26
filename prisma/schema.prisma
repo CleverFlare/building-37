@@ -20,8 +20,8 @@ model Apartment {
   apartmentNumber Int
   ownerName       String
   ownerPhone      String
-  occupantName    String?
-  occupantPhone   String?
+  renterName      String?
+  renterPhone     String?
   state           State    @default(vacant)
   createdAt       DateTime @default(now())
   updateAt        DateTime @updatedAt
@@ -50,8 +50,8 @@ model MonthlyFee {
   apartmentNumber Int
   ownerName       String
   ownerPhone      String
-  occupantName    String?
-  occupantPhone   String?
+  renterName      String?
+  renterPhone     String?
   state           State   @default(vacant)
   // ===
 

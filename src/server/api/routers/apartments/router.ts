@@ -32,8 +32,8 @@ export const apartmentsRouter = createTRPCRouter({
           ownerName: input.owner.name,
           ownerPhone: input.owner.phone,
           apartmentNumber: input.apartmentNumber,
-          occupantName: input.occupant?.name ?? null,
-          occupantPhone: input.occupant?.phone ?? null,
+          renterName: input.renter?.name ?? null,
+          renterPhone: input.renter?.phone ?? null,
         },
       });
     }),
@@ -66,8 +66,8 @@ export const apartmentsRouter = createTRPCRouter({
           ownerName: input.owner.name,
           ownerPhone: input.owner.phone,
           apartmentNumber: input.apartmentNumber,
-          occupantName: input.occupant?.name ?? null,
-          occupantPhone: input.occupant?.phone ?? null,
+          renterName: input.renter?.name ?? null,
+          renterPhone: input.renter?.phone ?? null,
         },
       });
     }),

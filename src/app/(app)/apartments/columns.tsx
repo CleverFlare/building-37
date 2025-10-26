@@ -2,6 +2,7 @@
 
 import DeleteApartmentDropdownItem from "@/components/delete-apartment-dropdown-item";
 import QrDialog from "@/components/qr-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Chip } from "@/components/ui/chip";
@@ -13,10 +14,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { arabicStates } from "@/config/apartment-arabic-state";
 import { mapToVariant } from "@/lib/map-to-variant";
+import { cn } from "@/lib/utils";
 import {
   CalendarDotsIcon,
   DoorIcon,
   HouseIcon,
+  KeyIcon,
   PenIcon,
   PhoneIcon,
   QrCodeIcon,
@@ -31,6 +34,7 @@ import { ar } from "date-fns/locale";
 import { EllipsisIcon } from "lucide-react";
 import Link from "next/link";
 import { useState, type ComponentProps } from "react";
+import { RowActions } from "./row-actions";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -39,8 +43,8 @@ export type Apartment = {
   apartmentNumber: number;
   ownerName: string;
   ownerPhone: string;
-  occupantName: string | null;
-  occupantPhone: string | null;
+  renterName: string | null;
+  renterPhone: string | null;
   state: State;
   createdAt: Date;
 };
@@ -85,11 +89,34 @@ export const columns: ColumnDef<Apartment>[] = [
     enableColumnFilter: true,
   },
   {
+    id: "owner",
+    header: "المالك",
+    cell: ({ row }) => (
+      <span className="flex flex-col gap-1">
+        <p>{row.original.ownerName}</p>
+        <p className="text-muted-foreground text-sm">
+          {row.original.ownerPhone}
+        </p>
+      </span>
+    ),
+    meta: {
+      icon: KeyIcon,
+      hide: {
+        desktop: false,
+        mobile: true,
+      },
+    },
+  },
+  {
     accessorKey: "ownerName",
     header: "إسم المالك",
     meta: {
       mobileType: "title",
       icon: UserIcon,
+      hide: {
+        desktop: true,
+        mobile: false,
+      },
     },
   },
   {
@@ -100,6 +127,10 @@ export const columns: ColumnDef<Apartment>[] = [
       variant: "text",
       icon: PhoneIcon,
       mobileType: "description",
+      hide: {
+        mobile: false,
+        desktop: true,
+      },
     },
     enableColumnFilter: true,
     cell: ({
@@ -111,29 +142,25 @@ export const columns: ColumnDef<Apartment>[] = [
     },
   },
   {
-    id: "state",
+    id: "status",
     header: "حالة الشقة",
     cell: ({
       row: {
         original: { state },
       },
     }) => (
-      <Chip
-        variant={mapToVariant<
-          ComponentProps<typeof Chip>["variant"],
-          typeof state
-        >(
-          {
-            occupied: "heavy",
-            rented: "medium",
-            vacant: "light",
-          },
-          "light",
-          state,
-        )}
-      >
+      <Badge variant="outline" className="gap-2">
+        <span
+          className={cn(
+            "size-2 rounded-full",
+            "bg-gray-500",
+            state === "vacant" && "bg-secondary",
+            state === "rented" && "bg-green-500",
+            state === "occupied" && "bg-primary",
+          )}
+        />
         {arabicStates[state]}
-      </Chip>
+      </Badge>
     ),
     meta: {
       label: "حالة الشقة",
@@ -157,37 +184,63 @@ export const columns: ColumnDef<Apartment>[] = [
     enableColumnFilter: true,
   },
   {
-    accessorKey: "occupantName",
-    header: "إسم الساكن",
+    id: "renter",
+    header: "المستأجر",
+    cell: ({ row }) =>
+      row.original.renterName && row.original.renterPhone ? (
+        <span className="flex flex-col gap-1">
+          <p>{row.original.renterName}</p>
+          <p className="text-muted-foreground text-sm">
+            {row.original.renterPhone}
+          </p>
+        </span>
+      ) : (
+        "-"
+      ),
+    meta: {
+      icon: UserIcon,
+      hide: {
+        desktop: false,
+        mobile: true,
+      },
+    },
+  },
+  {
+    accessorKey: "renterName",
+    header: "إسم المستأجر",
     cell: ({
       row: {
-        original: { occupantName, state },
+        original: { renterName, state },
       },
     }) =>
       state === "rented" ? (
-        (occupantName ?? <p className="text-muted-foreground">غير معروف</p>)
+        (renterName ?? <p className="text-muted-foreground">غير معروف</p>)
       ) : (
         <p className="text-muted-foreground">-</p>
       ),
     meta: {
-      label: "إسم الساكن",
-      placeholder: "بحث في إسم الساكن...",
+      label: "إسم المستأجر",
+      placeholder: "بحث في إسم المستأجر...",
       variant: "text",
       icon: UserIcon,
+      hide: {
+        desktop: true,
+        mobile: false,
+      },
     },
     enableColumnFilter: true,
   },
   {
-    accessorKey: "occupantPhone",
-    header: "رقم هاتف الساكن",
+    accessorKey: "renterPhone",
+    header: "رقم هاتف المستأجر",
     cell: ({
       row: {
-        original: { occupantPhone, state },
+        original: { renterPhone, state },
       },
     }) => {
       return state === "rented" ? (
-        occupantPhone ? (
-          <span dir="ltr">{occupantPhone}</span>
+        renterPhone ? (
+          <span dir="ltr">{renterPhone}</span>
         ) : (
           <p className="text-muted-foreground">لا يوجد</p>
         )
@@ -196,9 +249,13 @@ export const columns: ColumnDef<Apartment>[] = [
       );
     },
     meta: {
-      label: "رقم هاتف الساكن",
+      label: "رقم هاتف المستأجر",
       variant: "text",
       icon: PhoneIcon,
+      hide: {
+        desktop: true,
+        mobile: false,
+      },
     },
     enableColumnFilter: true,
   },
@@ -217,54 +274,18 @@ export const columns: ColumnDef<Apartment>[] = [
     },
     enableColumnFilter: true,
   },
+
+  // Row actions (⋮ dropdown)
   {
     id: "actions",
-    cell: function Cell({
-      row: {
-        original: { id, apartmentNumber },
-      },
-    }) {
-      const [open, setIsOpen] = useState<boolean>(false);
-      return (
-        <>
-          <QrDialog
-            open={open}
-            setIsOpen={setIsOpen}
-            apartmentNumber={apartmentNumber}
-          />
-          <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="Open menu"
-                variant="ghost"
-                className="data-[state=open]:bg-muted flex size-8 p-0"
-              >
-                <EllipsisIcon className="size-4" aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => {
-                  setIsOpen(true);
-                }}
-              >
-                <QrCodeIcon />
-                QR
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href={`/apartments/edit/${id}`}>
-                  <PenIcon />
-                  تعديل
-                </Link>
-              </DropdownMenuItem>
-              <DeleteApartmentDropdownItem id={id} />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </>
-      );
-    },
-    size: 30,
+    cell: ({ row }) => (
+      <RowActions
+        id={row.original.id}
+        apartmentNumber={row.original.apartmentNumber}
+      />
+    ),
 
+    size: 30,
     meta: {
       mobileType: "action",
     },

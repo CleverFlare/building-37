@@ -38,10 +38,12 @@ export function MobileDataTable<TData>({
         {table.getRowModel().rows.map((row) => {
           const title = row
             .getAllCells()
+            .filter((cell) => !cell.column.columnDef.meta?.hideOnMobile)
             .find((cell) => cell.column.columnDef.meta?.mobileType === "title");
 
           const description = row
             .getAllCells()
+            .filter((cell) => !cell.column.columnDef.meta?.hide?.mobile)
             .find(
               (cell) =>
                 cell.column.columnDef.meta?.mobileType === "description",
@@ -49,6 +51,7 @@ export function MobileDataTable<TData>({
 
           const action = row
             .getAllCells()
+            .filter((cell) => !cell.column.columnDef.meta?.hide?.mobile)
             .find(
               (cell) => cell.column.columnDef.meta?.mobileType === "action",
             );
@@ -91,45 +94,45 @@ export function MobileDataTable<TData>({
                 </CardHeader>
               )}
               <CardContent className="flex flex-col">
-                {row.getVisibleCells().map((cell) => {
-                  const type = cell.column.columnDef.meta?.mobileType;
-                  if (type !== "default" && type !== undefined) return null;
+                {row
+                  .getVisibleCells()
+                  .filter((cell) => !cell.column.columnDef.meta?.hide?.mobile)
+                  .map((cell) => {
+                    const type = cell.column.columnDef.meta?.mobileType;
+                    if (type !== "default" && type !== undefined) return null;
 
-                  const header = table
-                    .getFlatHeaders()
-                    .find(
-                      (header) =>
-                        header.column.columnDef.header ===
-                        cell.column.columnDef.header,
-                    );
+                    const header = table
+                      .getFlatHeaders()
+                      .find(
+                        (header) =>
+                          header.column.columnDef.header ===
+                          cell.column.columnDef.header,
+                      );
 
-                  return (
-                    <div
-                      className="flex items-center justify-between py-2 text-sm"
-                      key={cell.id}
-                    >
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        {
-                          // eslint-disable-next-line
-                          header && header.column.columnDef.meta?.icon && (
+                    return (
+                      <div
+                        className="flex items-center justify-between py-2 text-sm"
+                        key={cell.id}
+                      >
+                        <span className="text-muted-foreground flex items-center gap-2">
+                          {header && header.column.columnDef.meta?.icon && (
                             <header.column.columnDef.meta.icon />
-                          )
-                        }
-                        {header &&
-                          flexRender(
-                            header?.column.columnDef.header,
-                            header?.getContext(),
                           )}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </span>
-                    </div>
-                  );
-                })}
+                          {header &&
+                            flexRender(
+                              header?.column.columnDef.header,
+                              header?.getContext(),
+                            )}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
               </CardContent>
             </Card>
           );

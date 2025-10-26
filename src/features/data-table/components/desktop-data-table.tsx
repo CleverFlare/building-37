@@ -33,35 +33,39 @@ export function DesktopDataTable<TData>({
           <TableHeader className="bg-muted sticky">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    style={{
-                      ...getCommonPinningStyles({ column: header.column }),
-                    }}
-                    className="text-muted-foreground"
-                  >
-                    {header.column.columnDef.meta?.icon && (
-                      <span className="flex items-center gap-2">
-                        <header.column.columnDef.meta.icon />
-                        {header.isPlaceholder
+                {headerGroup.headers
+                  .filter(
+                    (header) => !header.column.columnDef.meta?.hide?.desktop,
+                  )
+                  .map((header) => (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{
+                        ...getCommonPinningStyles({ column: header.column }),
+                      }}
+                      className="text-muted-foreground"
+                    >
+                      {header.column.columnDef.meta?.icon && (
+                        <span className="flex items-center gap-2">
+                          <header.column.columnDef.meta.icon />
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </span>
+                      )}
+                      {!header.column.columnDef.meta?.icon &&
+                        (header.isPlaceholder
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
                               header.getContext(),
-                            )}
-                      </span>
-                    )}
-                    {!header.column.columnDef.meta?.icon &&
-                      (header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          ))}
-                  </TableHead>
-                ))}
+                            ))}
+                    </TableHead>
+                  ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -71,20 +75,26 @@ export function DesktopDataTable<TData>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => row.toggleSelected()}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      style={{
-                        ...getCommonPinningStyles({ column: cell.column }),
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+                  {row
+                    .getVisibleCells()
+                    .filter(
+                      (cell) => !cell.column.columnDef.meta?.hide?.desktop,
+                    )
+                    .map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          ...getCommonPinningStyles({ column: cell.column }),
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
                 </TableRow>
               ))
             ) : (

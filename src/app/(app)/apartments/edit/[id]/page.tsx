@@ -19,7 +19,8 @@ export default async function Page({
         <h2 className="text-2xl font-bold">إضافة شقة</h2>
         <p className="text-muted-foreground">
           تتيح هذه الصفحة إضافة شقة جديدة إلى قاعدة البيانات. تحتوي الصفحة على
-          نموذج مُخصص يشمل الحقول الأساسية مثل رقم الشقة إسم المالك وإسم الساكن.
+          نموذج مُخصص يشمل الحقول الأساسية مثل رقم الشقة إسم المالك وإسم
+          المستأجر.
         </p>
       </div>
       <EditApartmentForm
@@ -28,9 +29,9 @@ export default async function Page({
           apartmentNumber: data.apartmentNumber,
           owner: { name: data.ownerName, phone: data.ownerPhone },
           state: data.state,
-          occupant: {
-            name: data.occupantName ?? "",
-            phone: data.occupantPhone ?? "",
+          renter: {
+            name: data.renterName ?? "",
+            phone: data.renterPhone ?? "",
           },
         }}
       />

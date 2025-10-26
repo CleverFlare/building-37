@@ -176,5 +176,7 @@ export const columns: ColumnDef<User>[] = [
       row.original.role !== "admin" ? (
         <UserRowActions user={row.original} />
       ) : null,
+
+    size: 30,
   },
 ];

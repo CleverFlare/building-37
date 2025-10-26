@@ -135,11 +135,11 @@ export function EditApartmentForm({
           />
           <FormField
             control={form.control}
-            name="occupant.name"
+            name="renter.name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel isFieldRequired={form.watch("state") === "rented"}>
-                  إسم الساكن
+                  إسم المستأجر
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -154,10 +154,10 @@ export function EditApartmentForm({
           />
           <FormField
             control={form.control}
-            name="occupant.phone"
+            name="renter.phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>رقم هاتف الساكن</FormLabel>
+                <FormLabel>رقم هاتف المستأجر</FormLabel>
                 <FormControl>
                   <PhoneInput
                     countrySelectProps={{ disabled: true }}

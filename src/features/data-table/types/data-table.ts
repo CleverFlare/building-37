@@ -4,7 +4,6 @@ import type { FilterItemSchema } from "@/features/data-table/lib/parsers";
 
 declare module "@tanstack/react-table" {
   // biome-ignore lint/correctness/noUnusedVariables: TValue is used in the ColumnMeta interface
-  // eslint-disable-next-line
   interface ColumnMeta<TData extends RowData, TValue> {
     label?: string;
     placeholder?: string;
@@ -14,6 +13,10 @@ declare module "@tanstack/react-table" {
     unit?: string;
     icon?: React.FC<React.SVGProps<SVGSVGElement>>;
     mobileType?: "title" | "description" | "action" | "default" | "select";
+    hide?: {
+      mobile: boolean;
+      desktop: boolean;
+    };
   }
 }
 
