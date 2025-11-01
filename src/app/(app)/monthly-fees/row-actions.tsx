@@ -21,7 +21,7 @@ export function RowActions({ id }: { id: string }) {
 
   return (
     <Button
-      variant="destructive"
+      variant="ghost"
       onClick={() => handleDelete()}
       disabled={isPending}
       size="icon"

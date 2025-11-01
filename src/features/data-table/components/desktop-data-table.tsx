@@ -75,7 +75,9 @@ export function DesktopDataTable<TData>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => row.toggleSelected()}
+                  onClick={(e) => {
+                    if (e.target === e.currentTarget) row.toggleSelected();
+                  }}
                 >
                   {row
                     .getVisibleCells()
@@ -87,6 +89,10 @@ export function DesktopDataTable<TData>({
                         key={cell.id}
                         style={{
                           ...getCommonPinningStyles({ column: cell.column }),
+                        }}
+                        onClick={(e) => {
+                          if (e.target === e.currentTarget)
+                            row.toggleSelected();
                         }}
                       >
                         {flexRender(

@@ -15,14 +15,40 @@ model GlobalConfig {
   monthlyFee Int    @default(50)
 }
 
+model Owner {
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  apartment        Apartment? @relation(fields: [apartmentId], references: [id])
+  apartmentId      String?    @db.ObjectId
+  name             String
+  phone            String
+  ownershipStartAt DateTime
+  ownershipEndAt   DateTime?
+  idPhoto          String?
+  idPhotoKey       String?
+  createdAt        DateTime   @default(now())
+  updateAt         DateTime   @updatedAt
+}
+
+model Renter {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  apartment   Apartment? @relation(fields: [apartmentId], references: [id])
+  apartmentId String?    @db.ObjectId
+  name        String
+  phone       String?
+  rentStartAt DateTime
+  rentEndAt   DateTime?
+  idPhoto     String?
+  idPhotoKey  String?
+  createdAt   DateTime   @default(now())
+  updateAt    DateTime   @updatedAt
+}
+
 model Apartment {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   apartmentNumber Int
-  ownerName       String
-  ownerPhone      String
-  renterName      String?
-  renterPhone     String?
-  state           State    @default(vacant)
+  owners          Owner[]
+  renters         Renter[]
+  status          Status   @default(vacant)
   createdAt       DateTime @default(now())
   updateAt        DateTime @updatedAt
 }
@@ -52,7 +78,7 @@ model MonthlyFee {
   ownerPhone      String
   renterName      String?
   renterPhone     String?
-  state           State   @default(vacant)
+  status          Status  @default(vacant)
   // ===
 
   paidAmount Int
@@ -70,10 +96,9 @@ model Balance {
   amount Int
 }
 
-enum State {
+enum Status {
   vacant
   occupied
-  rented
 }
 
 enum Role {

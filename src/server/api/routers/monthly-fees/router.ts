@@ -27,6 +27,10 @@ export const monthlyFeesRouter = createTRPCRouter({
 
       const apartment = await ctx.db.apartment.findFirst({
         where: { apartmentNumber: input.apartmentNumber },
+        include: {
+          owners: { take: 1, orderBy: { ownershipStartAt: "desc" } },
+          renters: { take: 1, orderBy: { rentStartAt: "desc" } },
+        },
       });
 
       if (!apartment)
@@ -70,11 +74,11 @@ export const monthlyFeesRouter = createTRPCRouter({
       await ctx.db.monthlyFee.create({
         data: {
           apartmentNumber: apartment.apartmentNumber,
-          ownerName: apartment.ownerName,
-          ownerPhone: apartment.ownerPhone,
-          renterName: apartment.renterName,
-          renterPhone: apartment.renterPhone,
-          state: apartment.state,
+          ownerName: apartment.owners[0]!.name,
+          ownerPhone: apartment.owners[0]!.phone,
+          renterName: apartment.renters?.[0]?.name,
+          renterPhone: apartment.renters?.[0]?.phone,
+          status: apartment.status,
           paidAmount: monthlyFee,
         },
       });
@@ -91,6 +95,7 @@ export const monthlyFeesRouter = createTRPCRouter({
         },
       });
     }),
+
   delete: roleProcedure(["admin"])
     .input(z.object({ ids: z.array(z.string()) }))
     .mutation(async ({ input, ctx }) => {

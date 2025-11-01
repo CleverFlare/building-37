@@ -1,6 +1,13 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod/v4";
 
+// R2_ENDPOINT=https://530f69d363f44bcc323fb78184942536.r2.cloudflarestorage.com/building-finances
+// API_TOKEN=5kcp_P_3Vl24XbQOvj2_2QPyDiHeUV34FZtiYgLJ
+// AWS_ACCESS_KEY_ID=50b28075dd5f9520c1d1e851bbd08fed
+// AWS_SECRET_ACCESS_KEY=524554eb9bbb432cd1734ae2feb77f2c0f17341ceda68571b16758f45d8ca032
+// R2_BUCKET_NAME=building-finances
+// R2_BUCKET=building-finances
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -22,6 +29,14 @@ export const env = createEnv({
       .string()
       .transform((v) => +v)
       .pipe(z.number()),
+
+    R2_ENDPOINT: z.string(),
+    API_TOKEN: z.string(),
+    AWS_ACCESS_KEY_ID: z.string(),
+    AWS_SECRET_ACCESS_KEY: z.string(),
+    R2_BUCKET_NAME: z.string(),
+    R2_BUCKET: z.string(),
+    R2_PUBLIC_SERVE_URL: z.string(),
   },
 
   /**
@@ -45,6 +60,15 @@ export const env = createEnv({
     GMAIL_PASS: process.env.GMAIL_PASS,
     PASSWORD_SALT: process.env.PASSWORD_SALT,
     DEFAULT_MONTHLY_FEE: process.env.DEFAULT_MONTHLY_FEE,
+
+    R2_ENDPOINT: process.env.R2_ENDPOINT,
+    API_TOKEN: process.env.API_TOKEN,
+    AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+    R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
+    R2_BUCKET: process.env.R2_BUCKET,
+    R2_PUBLIC_SERVE_URL: process.env.R2_PUBLIC_SERVE_URL,
+
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

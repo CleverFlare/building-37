@@ -1,39 +1,21 @@
 "use client";
 
-import DeleteApartmentDropdownItem from "@/components/delete-apartment-dropdown-item";
-import QrDialog from "@/components/qr-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Chip } from "@/components/ui/chip";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { arabicStates } from "@/config/apartment-arabic-state";
-import { mapToVariant } from "@/lib/map-to-variant";
 import { cn } from "@/lib/utils";
 import {
   CalendarDotsIcon,
   DoorIcon,
   HouseIcon,
   KeyIcon,
-  PenIcon,
   PhoneIcon,
-  QrCodeIcon,
-  SlidersHorizontalIcon,
-  TextIndentIcon,
   UserIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import type { State } from "@prisma/client";
+import type { Owner, Renter, Status } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
-import { EllipsisIcon } from "lucide-react";
-import Link from "next/link";
-import { useState, type ComponentProps } from "react";
 import { RowActions } from "./row-actions";
 
 // This type is used to define the shape of our data.
@@ -41,11 +23,9 @@ import { RowActions } from "./row-actions";
 export type Apartment = {
   id: string;
   apartmentNumber: number;
-  ownerName: string;
-  ownerPhone: string;
-  renterName: string | null;
-  renterPhone: string | null;
-  state: State;
+  owners: Owner;
+  renters?: Renter;
+  status: Status;
   createdAt: Date;
 };
 
@@ -93,9 +73,9 @@ export const columns: ColumnDef<Apartment>[] = [
     header: "المالك",
     cell: ({ row }) => (
       <span className="flex flex-col gap-1">
-        <p>{row.original.ownerName}</p>
+        <p>{row.original.owners.name}</p>
         <p className="text-muted-foreground text-sm">
-          {row.original.ownerPhone}
+          {row.original.owners.phone}
         </p>
       </span>
     ),
@@ -108,11 +88,14 @@ export const columns: ColumnDef<Apartment>[] = [
     },
   },
   {
-    accessorKey: "ownerName",
+    id: "ownerName",
     header: "إسم المالك",
+    accessorFn: (row) => row.owners.name,
     meta: {
+      label: "إسم المالك",
       mobileType: "title",
       icon: UserIcon,
+      variant: "text",
       hide: {
         desktop: true,
         mobile: false,
@@ -120,7 +103,7 @@ export const columns: ColumnDef<Apartment>[] = [
     },
   },
   {
-    accessorKey: "ownerPhone",
+    id: "ownerPhone",
     header: "رقم هاتف المالك",
     meta: {
       label: "رقم هاتف المالك",
@@ -132,21 +115,21 @@ export const columns: ColumnDef<Apartment>[] = [
         desktop: true,
       },
     },
-    enableColumnFilter: true,
     cell: ({
       row: {
-        original: { ownerPhone },
+        original: { owners },
       },
     }) => {
-      return <span dir="ltr">{ownerPhone}</span>;
+      return <span dir="ltr">{owners.phone}</span>;
     },
+    enableColumnFilter: true,
   },
   {
     id: "status",
     header: "حالة الشقة",
     cell: ({
       row: {
-        original: { state },
+        original: { status },
       },
     }) => (
       <Badge variant="outline" className="gap-2">
@@ -154,12 +137,11 @@ export const columns: ColumnDef<Apartment>[] = [
           className={cn(
             "size-2 rounded-full",
             "bg-gray-500",
-            state === "vacant" && "bg-secondary",
-            state === "rented" && "bg-green-500",
-            state === "occupied" && "bg-primary",
+            status === "vacant" && "bg-secondary",
+            status === "occupied" && "bg-primary",
           )}
         />
-        {arabicStates[state]}
+        {arabicStates[status]}
       </Badge>
     ),
     meta: {
@@ -187,15 +169,15 @@ export const columns: ColumnDef<Apartment>[] = [
     id: "renter",
     header: "المستأجر",
     cell: ({ row }) =>
-      row.original.renterName && row.original.renterPhone ? (
+      row.original?.renters?.name && row.original?.renters?.phone ? (
         <span className="flex flex-col gap-1">
-          <p>{row.original.renterName}</p>
+          <p>{row.original.renters.name}</p>
           <p className="text-muted-foreground text-sm">
-            {row.original.renterPhone}
+            {row.original.renters.phone}
           </p>
         </span>
       ) : (
-        "-"
+        "غير مؤجرة"
       ),
     meta: {
       icon: UserIcon,
@@ -206,21 +188,12 @@ export const columns: ColumnDef<Apartment>[] = [
     },
   },
   {
-    accessorKey: "renterName",
+    id: "renterName",
     header: "إسم المستأجر",
-    cell: ({
-      row: {
-        original: { renterName, state },
-      },
-    }) =>
-      state === "rented" ? (
-        (renterName ?? <p className="text-muted-foreground">غير معروف</p>)
-      ) : (
-        <p className="text-muted-foreground">-</p>
-      ),
+    accessorFn: (row) => row.renters?.phone ?? "غير مؤجرة",
     meta: {
       label: "إسم المستأجر",
-      placeholder: "بحث في إسم المستأجر...",
+      mobileType: "title",
       variant: "text",
       icon: UserIcon,
       hide: {
@@ -231,31 +204,24 @@ export const columns: ColumnDef<Apartment>[] = [
     enableColumnFilter: true,
   },
   {
-    accessorKey: "renterPhone",
+    id: "renterPhone",
     header: "رقم هاتف المستأجر",
-    cell: ({
-      row: {
-        original: { renterPhone, state },
-      },
-    }) => {
-      return state === "rented" ? (
-        renterPhone ? (
-          <span dir="ltr">{renterPhone}</span>
-        ) : (
-          <p className="text-muted-foreground">لا يوجد</p>
-        )
-      ) : (
-        <p className="text-muted-foreground">-</p>
-      );
-    },
     meta: {
       label: "رقم هاتف المستأجر",
       variant: "text",
       icon: PhoneIcon,
+      mobileType: "description",
       hide: {
-        desktop: true,
         mobile: false,
+        desktop: true,
       },
+    },
+    cell: ({
+      row: {
+        original: { renters },
+      },
+    }) => {
+      return <span dir="ltr">{renters?.phone ?? "غير مؤجرة"}</span>;
     },
     enableColumnFilter: true,
   },

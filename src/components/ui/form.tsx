@@ -15,7 +15,6 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-import { useFieldOptionalityCheck } from "@/hooks/use-field-optional-check";
 import type { ZodObject } from "zod/v4";
 
 const SchemaContext = React.createContext<ZodObject | null>(null);
@@ -124,10 +123,6 @@ function FormLabel({
 }) {
   const { name, error, formItemId } = useFormField();
   const schema = React.useContext(SchemaContext);
-  const isFieldOptionalBasedOnSchema = useFieldOptionalityCheck(
-    name,
-    schema ?? undefined,
-  );
 
   return (
     <Label
@@ -138,11 +133,6 @@ function FormLabel({
       {...props}
     >
       {children}
-      <FormLabelRequiredAsterisk
-        isOptional={
-          isFieldRequired ? !isFieldRequired : !!isFieldOptionalBasedOnSchema
-        }
-      />
     </Label>
   );
 }

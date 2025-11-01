@@ -11,6 +11,8 @@ import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import QRCode from "qrcode";
 import { mergePdfs } from "@/lib/merge-pdfs";
+import _ from "lodash";
+import type { Prisma } from "@prisma/client";
 
 export const apartmentsRouter = createTRPCRouter({
   create: roleProcedure(["admin", "moderator"])
@@ -28,24 +30,50 @@ export const apartmentsRouter = createTRPCRouter({
 
       await db.apartment.create({
         data: {
-          state: input.state,
-          ownerName: input.owner.name,
-          ownerPhone: input.owner.phone,
+          status: input.status,
           apartmentNumber: input.apartmentNumber,
-          renterName: input.renter?.name ?? null,
-          renterPhone: input.renter?.phone ?? null,
+          owners: {
+            createMany: {
+              data: input.owner,
+            },
+          },
+          ...(input.renter.length > 0
+            ? {
+                renters: {
+                  createMany: {
+                    data: input.renter,
+                  },
+                },
+              }
+            : {}),
         },
       });
     }),
   edit: roleProcedure(["admin", "moderator"])
     .input(editApartmentSchema)
     .mutation(async ({ input }) => {
+      // Fetch existing apartment including relational records
       const apartment = await db.apartment.findUnique({
         where: { id: input.id },
+        include: {
+          owners: true,
+          renters: true,
+        },
       });
 
+      // Abort if the apartment does not exist
+      if (!apartment)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "هذه الشقة غير موجودة في قاعدة البيانات",
+        });
+
+      /**
+       * Validate uniqueness of apartmentNumber
+       * - Only check if the number has changed
+       */
       const isTheSameNumber =
-        input.apartmentNumber === apartment?.apartmentNumber;
+        input.apartmentNumber === apartment.apartmentNumber;
 
       if (!isTheSameNumber) {
         const isApartmentNumberAlreadyInUse = await db.apartment.findFirst({
@@ -59,15 +87,102 @@ export const apartmentsRouter = createTRPCRouter({
           });
       }
 
+      /**
+       * Determine removed owners & renters
+       * - Exists in DB but not in updated input
+       */
+      const deletedOwners = apartment.owners.filter(
+        (owner) => !input.owner.some((o) => o?.id === owner.id),
+      );
+      const deletedRenters = apartment.renters.filter(
+        (renter) => !input.renter.some((r) => r?.id === renter.id),
+      );
+
+      // Physically remove deleted relational records
+      await db.owner.deleteMany({
+        where: { id: { in: deletedOwners.map((owner) => owner.id) } },
+      });
+      await db.renter.deleteMany({
+        where: { id: { in: deletedRenters.map((renter) => renter.id) } },
+      });
+
+      /**
+       * Determine newly created relations
+       * - Items without an ID = not in DB yet
+       */
+      const createdOwners = input.owner.filter((owner) => !("id" in owner));
+      const createdRenters = input.renter.filter((renter) => !("id" in renter));
+
+      /**
+       * Determine updated relations
+       * - Items still exist but changed from DB values
+       */
+      const updatedOwners = input.owner.filter((owner) => {
+        const ownerRecord = apartment.owners.find((o) => o.id === owner?.id);
+        if (!ownerRecord) return false;
+        if (_.isEqual(ownerRecord, owner)) return false;
+        return true;
+      });
+
+      const updatedRenters = input.renter.filter((renter) => {
+        const renterRecord = apartment.renters.find((r) => r.id === renter?.id);
+        if (!renterRecord) return false;
+        if (_.isEqual(renterRecord, renter)) return false;
+        return true;
+      });
+
+      /**
+       * Final update:
+       * - Update apartment basic fields
+       * - Cascade create/update on relations
+       */
+
+      const conditionalData: Prisma.ApartmentUpdateInput = {};
+
+      const createdOwnersIsEmpty = createdOwners.length <= 0;
+      const updatedOwnersIsEmpty = updatedOwners.length <= 0;
+
+      if (!createdOwnersIsEmpty) {
+        conditionalData.owners = {};
+
+        if (!createdOwnersIsEmpty)
+          conditionalData.owners.createMany = {
+            data: createdOwners,
+          };
+      }
+
+      const createdRentersIsEmpty = createdRenters.length <= 0;
+      const updatedRentersIsEmpty = updatedRenters.length <= 0;
+
+      if (!createdRentersIsEmpty) {
+        conditionalData.renters = {};
+
+        if (!createdRentersIsEmpty)
+          conditionalData.renters.createMany = {
+            data: createdRenters,
+          };
+      }
+
+      if (!updatedOwnersIsEmpty)
+        for (const { id, ...updatedOwner } of updatedOwners)
+          await db.owner.update({
+            where: { id: id },
+            data: { ...updatedOwner },
+          });
+
+      if (!updatedRentersIsEmpty)
+        for (const { id, ...updatedOwner } of updatedOwners)
+          await db.owner.update({
+            where: { id: id },
+            data: { ...updatedOwner },
+          });
+
       await db.apartment.update({
         where: { id: input.id },
         data: {
-          state: input.state,
-          ownerName: input.owner.name,
-          ownerPhone: input.owner.phone,
+          status: input.status,
           apartmentNumber: input.apartmentNumber,
-          renterName: input.renter?.name ?? null,
-          renterPhone: input.renter?.phone ?? null,
+          ...conditionalData,
         },
       });
     }),

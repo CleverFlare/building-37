@@ -14,11 +14,14 @@ export type Filter = {
 export function filtersToPrismaWhere<T>(
   filters: Filter[],
   joinOperator: "and" | "or" = "and",
+  ignore?: string[],
 ): T {
   // Replace `UserWhereInput` with your actual Prisma model input type
   const conditions: Record<string, unknown>[] = [];
 
   for (const { id, operator, variant, value } of filters) {
+    if (ignore?.includes(id)) continue;
+
     const variantConfig = prismaFiltersConfig[variant];
 
     const typedValue = variantConfig.transformer.parse(value);

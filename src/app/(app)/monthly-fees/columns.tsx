@@ -2,7 +2,7 @@
 
 import { type ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { State } from "@prisma/client";
+import type { Owner, Renter, Status } from "@prisma/client";
 import {
   CalendarDotsIcon,
   CoinsIcon,
@@ -12,9 +12,6 @@ import {
   PhoneIcon,
   UserIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { Chip } from "@/components/ui/chip";
-import { mapToVariant } from "@/lib/map-to-variant";
-import type { ComponentProps } from "react";
 import { arabicStates } from "@/config/apartment-arabic-state";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
@@ -25,12 +22,12 @@ import { Badge } from "@/components/ui/badge";
 export type MonthlyFee = {
   id: string;
   apartmentNumber: number;
+  paidAmount: number;
   ownerName: string;
   ownerPhone: string;
-  renterName: string | null;
-  renterPhone: string | null;
-  paidAmount: number;
-  state: State;
+  renterName?: string;
+  renterPhone?: string;
+  status: Status;
   createdAt: Date;
 };
 
@@ -108,11 +105,14 @@ export const columns: ColumnDef<MonthlyFee>[] = [
     },
   },
   {
-    accessorKey: "ownerName",
+    id: "ownerName",
     header: "إسم المالك",
+    accessorFn: (row) => row.ownerName,
     meta: {
+      label: "إسم المالك",
       mobileType: "title",
       icon: UserIcon,
+      variant: "text",
       hide: {
         desktop: true,
         mobile: false,
@@ -120,7 +120,7 @@ export const columns: ColumnDef<MonthlyFee>[] = [
     },
   },
   {
-    accessorKey: "ownerPhone",
+    id: "ownerPhone",
     header: "رقم هاتف المالك",
     meta: {
       label: "رقم هاتف المالك",
@@ -132,7 +132,6 @@ export const columns: ColumnDef<MonthlyFee>[] = [
         desktop: true,
       },
     },
-    enableColumnFilter: true,
     cell: ({
       row: {
         original: { ownerPhone },
@@ -140,28 +139,30 @@ export const columns: ColumnDef<MonthlyFee>[] = [
     }) => {
       return <span dir="ltr">{ownerPhone}</span>;
     },
+    enableColumnFilter: true,
   },
   {
     id: "status",
     header: "حالة الشقة",
     cell: ({
       row: {
-        original: { state },
+        original: { status },
       },
-    }) => (
-      <Badge variant="outline" className="gap-2">
-        <span
-          className={cn(
-            "size-2 rounded-full",
-            "bg-gray-500",
-            state === "vacant" && "bg-secondary",
-            state === "rented" && "bg-green-500",
-            state === "occupied" && "bg-primary",
-          )}
-        />
-        {arabicStates[state]}
-      </Badge>
-    ),
+    }) => {
+      return (
+        <Badge variant="outline" className="gap-2">
+          <span
+            className={cn(
+              "size-2 rounded-full",
+              "bg-gray-500",
+              status === "vacant" && "bg-secondary",
+              status === "occupied" && "bg-primary",
+            )}
+          />
+          {arabicStates[status]}
+        </Badge>
+      );
+    },
     meta: {
       label: "حالة الشقة",
       variant: "select",
@@ -187,7 +188,7 @@ export const columns: ColumnDef<MonthlyFee>[] = [
     id: "renter",
     header: "المستأجر",
     cell: ({ row }) =>
-      row.original.renterName && row.original.renterPhone ? (
+      row.original?.renterName && row.original?.renterPhone ? (
         <span className="flex flex-col gap-1">
           <p>{row.original.renterName}</p>
           <p className="text-muted-foreground text-sm">
@@ -195,7 +196,7 @@ export const columns: ColumnDef<MonthlyFee>[] = [
           </p>
         </span>
       ) : (
-        "-"
+        "غير مؤجرة"
       ),
     meta: {
       icon: UserIcon,
@@ -206,21 +207,12 @@ export const columns: ColumnDef<MonthlyFee>[] = [
     },
   },
   {
-    accessorKey: "renterName",
+    id: "renterName",
     header: "إسم المستأجر",
-    cell: ({
-      row: {
-        original: { renterName, state },
-      },
-    }) =>
-      state === "rented" ? (
-        (renterName ?? <p className="text-muted-foreground">غير معروف</p>)
-      ) : (
-        <p className="text-muted-foreground">-</p>
-      ),
+    accessorFn: (row) => row.renterPhone ?? "غير مؤجرة",
     meta: {
       label: "إسم المستأجر",
-      placeholder: "بحث في إسم المستأجر...",
+      mobileType: "title",
       variant: "text",
       icon: UserIcon,
       hide: {
@@ -231,31 +223,24 @@ export const columns: ColumnDef<MonthlyFee>[] = [
     enableColumnFilter: true,
   },
   {
-    accessorKey: "renterPhone",
+    id: "renterPhone",
     header: "رقم هاتف المستأجر",
-    cell: ({
-      row: {
-        original: { renterPhone, state },
-      },
-    }) => {
-      return state === "rented" ? (
-        renterPhone ? (
-          <span dir="ltr">{renterPhone}</span>
-        ) : (
-          <p className="text-muted-foreground">لا يوجد</p>
-        )
-      ) : (
-        <p className="text-muted-foreground">-</p>
-      );
-    },
     meta: {
       label: "رقم هاتف المستأجر",
       variant: "text",
       icon: PhoneIcon,
+      mobileType: "description",
       hide: {
-        desktop: true,
         mobile: false,
+        desktop: true,
       },
+    },
+    cell: ({
+      row: {
+        original: { renterPhone },
+      },
+    }) => {
+      return <span dir="ltr">{renterPhone ?? "غير مؤجرة"}</span>;
     },
     enableColumnFilter: true,
   },
@@ -271,7 +256,6 @@ export const columns: ColumnDef<MonthlyFee>[] = [
       label: "تاريخ الإضافة",
       variant: "date",
       icon: CalendarDotsIcon,
-      mobileType: "description",
     },
     enableColumnFilter: true,
   },

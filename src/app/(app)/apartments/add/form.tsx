@@ -1,5 +1,4 @@
 "use client";
-import { PhoneInput } from "@/components/phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { type AddApartmentSchema, addApartmentSchema } from "./validation";
@@ -13,7 +12,6 @@ import {
   SchemaProvider,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { api } from "@/trpc/react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -27,20 +25,28 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { NumberInput } from "@/components/ui/number-input";
+import { Status } from "@prisma/client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { KeyIcon, UserIcon } from "@phosphor-icons/react/dist/ssr";
+import OwnersTab from "./_parts/owners-tab";
+import RentersTab from "./_parts/renters-tab";
+import { uploadFile } from "@/lib/r2";
 
 export function AddApartmentForm() {
   const form = useForm<AddApartmentSchema>({
     resolver: zodResolver(addApartmentSchema),
     defaultValues: {
-      state: "vacant",
-      owner: {
-        name: "",
-        phone: "",
-      },
-      renter: {
-        name: "",
-        phone: "",
-      },
+      owner: [
+        {
+          name: "",
+          phone: "",
+          ownershipStartAt: new Date(),
+          ownershipEndAt: null,
+          idPhoto: null,
+        },
+      ],
+      renter: [],
+      status: "vacant",
       apartmentNumber: 1,
     },
   });
@@ -57,7 +63,47 @@ export function AddApartmentForm() {
   });
 
   async function submit(data: AddApartmentSchema) {
-    await mutateAsync(data);
+    type Owners = (Omit<(typeof data.owner)[number], "idPhoto"> & {
+      idPhoto: string | null;
+      idPhotoKey: string | null;
+    })[];
+
+    type Renters = (Omit<(typeof data.renter)[number], "idPhoto"> & {
+      idPhoto: string | null;
+      idPhotoKey: string | null;
+    })[];
+
+    async function processPeople(
+      people: typeof data.owner | typeof data.renter,
+    ) {
+      return Promise.all(
+        people.map(async (person) => {
+          if (!person.idPhoto) {
+            return { ...person, idPhoto: null, idPhotoKey: null };
+          }
+
+          const file = await uploadFile(person.idPhoto);
+
+          return {
+            ...person,
+            idPhoto: file.url,
+            idPhotoKey: file.key,
+          };
+        }),
+      );
+    }
+
+    const [owners, renters] = await Promise.all([
+      processPeople(data.owner),
+      processPeople(data.renter),
+    ]);
+
+    await mutateAsync({
+      apartmentNumber: data.apartmentNumber,
+      status: data.status,
+      owner: owners as Owners,
+      renter: renters as Renters,
+    });
   }
 
   return (
@@ -86,38 +132,7 @@ export function AddApartmentForm() {
           />
           <FormField
             control={form.control}
-            name="owner.name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>إسم المالك</FormLabel>
-                <FormControl>
-                  <Input placeholder="الإسم كاملاً..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="owner.phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>رقم هاتف المالك</FormLabel>
-                <FormControl>
-                  <PhoneInput
-                    countrySelectProps={{ disabled: true }}
-                    defaultCountry="EG"
-                    placeholder="ادخل رقم هاتف صالح..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="state"
+            name="status"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>حالة الشقة</FormLabel>
@@ -127,11 +142,12 @@ export function AddApartmentForm() {
                       <SelectValue placeholder="مثلاً، هل الشقة مؤجرة؟" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="vacant">فارغة</SelectItem>
-                      <SelectItem value="occupied">
-                        مسكونة (من المالك)
+                      <SelectItem value={Status?.vacant ?? "vacant"}>
+                        فارغة
                       </SelectItem>
-                      <SelectItem value="rented">مؤجرة</SelectItem>
+                      <SelectItem value={Status?.occupied ?? "occupied"}>
+                        مسكونة
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -139,44 +155,26 @@ export function AddApartmentForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="renter.name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel isFieldRequired={form.watch("state") === "rented"}>
-                  إسم المستأجر
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="الإسم كاملاً..."
-                    disabled={form.watch("state") !== "rented"}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="renter.phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>رقم هاتف المستأجر</FormLabel>
-                <FormControl>
-                  <PhoneInput
-                    countrySelectProps={{ disabled: true }}
-                    defaultCountry="EG"
-                    placeholder="ادخل رقم هاتف صالح..."
-                    disabled={form.watch("state") !== "rented"}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <Tabs defaultValue="owners" className="col-span-full">
+            <TabsList>
+              <TabsTrigger value="owners">
+                <KeyIcon />
+                الملاك
+              </TabsTrigger>
+              <TabsTrigger value="renters">
+                <UserIcon />
+                المستأجرين
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="owners">
+              <OwnersTab control={form.control} />
+            </TabsContent>
+            <TabsContent value="renters">
+              <RentersTab control={form.control} />
+            </TabsContent>
+          </Tabs>
+
           <div className="col-span-full flex items-center gap-2">
             <Button variant="outline" type="button" asChild>
               <Link href="/apartments">عودة</Link>

@@ -9,9 +9,14 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  const data = await db.apartment.findUnique({ where: { id } });
+  const data = await db.apartment.findUnique({
+    where: { id },
+    include: { owners: true, renters: true },
+  });
 
   if (!data) redirect("/not-found");
+
+  console.log(data.owners[0]?.idPhoto);
 
   return (
     <div className="flex flex-col gap-4">
@@ -27,12 +32,9 @@ export default async function Page({
         id={id}
         initialValues={{
           apartmentNumber: data.apartmentNumber,
-          owner: { name: data.ownerName, phone: data.ownerPhone },
-          state: data.state,
-          renter: {
-            name: data.renterName ?? "",
-            phone: data.renterPhone ?? "",
-          },
+          status: data.status,
+          owner: data.owners,
+          renter: data.renters,
         }}
       />
     </div>
