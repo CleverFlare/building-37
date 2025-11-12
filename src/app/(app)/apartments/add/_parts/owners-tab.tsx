@@ -52,7 +52,7 @@ export default function OwnersTab({
       {!isEmpty &&
         ownersList.fields.map((field, index) => (
           <div
-            className="grid w-full grid-cols-1 items-center gap-x-8 gap-y-4 rounded-lg bg-white p-4 shadow-xs md:grid-cols-[auto_1fr]"
+            className="grid w-full grid-cols-1 items-center gap-x-8 gap-y-4 rounded-lg bg-white p-4 shadow-xs lg:grid-cols-[auto_1fr]"
             key={field.id}
           >
             <span className="col-span-full flex flex-col gap-4">
@@ -78,7 +78,7 @@ export default function OwnersTab({
                   <FormLabel>صورة البطاقة</FormLabel>
                   <FormControl>
                     <IdImageField
-                      className="w-[300px]"
+                      className="w-full max-w-[300px] md:w-screen"
                       value={field.value ?? undefined}
                       onChange={(file) => field.onChange(file)}
                       onRemove={() => field.onChange(undefined)}
@@ -89,7 +89,7 @@ export default function OwnersTab({
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <FormField
                 control={control}
                 name={`owner.${index}.name`}
