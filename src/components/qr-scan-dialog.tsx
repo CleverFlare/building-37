@@ -12,7 +12,7 @@ import {
   CredenzaTrigger,
 } from "./ui/credenza";
 import { Button } from "./ui/button";
-import { WarningIcon } from "@phosphor-icons/react/dist/ssr";
+import { QrCodeIcon, WarningIcon } from "@phosphor-icons/react/dist/ssr";
 import { useIsClient } from "@uidotdev/usehooks";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
@@ -65,6 +65,21 @@ export default function QrScanDialog({ children }: { children: ReactNode }) {
       <CredenzaTrigger asChild>{children}</CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
+          <span className="border-input bg-input/50 relative mx-auto mb-2 flex size-12 items-center justify-center overflow-hidden rounded-full border dark:bg-[#0f0f0f] dark:text-white">
+            {/* Small Grid Pattern */}
+            <div
+              className="absolute inset-0 z-0 h-full w-full"
+              style={{
+                backgroundImage: `
+        linear-gradient(to right, var(--border) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--border) 1px, transparent 1px)
+      `,
+                backgroundSize: "20px 20px",
+              }}
+            />
+            {/* Your Content/Components */}
+            <QrCodeIcon size={25} className="z-10" />
+          </span>
           <CredenzaTitle className="text-center">مسح رمز QR</CredenzaTitle>
           <CredenzaDescription className="text-center">
             قم بمسح رمز QR الخاص بالشقة لتسجيل عملية الدفع
@@ -91,7 +106,7 @@ export default function QrScanDialog({ children }: { children: ReactNode }) {
         </CredenzaBody>
         <CredenzaFooter>
           <CredenzaClose asChild>
-            <Button variant="outline" ref={closeRef}>
+            <Button variant="outline" ref={closeRef} className="w-full">
               خروج
             </Button>
           </CredenzaClose>

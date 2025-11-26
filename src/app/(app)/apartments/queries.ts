@@ -81,8 +81,8 @@ export async function getApartments(input: GetApartmentsSchema) {
   return {
     data: data.map((apartment) => ({
       ...apartment,
-      renters: apartment.renters[0],
-      owners: apartment.owners[0]!,
+      renters: apartment.renters,
+      owners: apartment.owners!,
     })),
     pageCount: totalPages,
   };

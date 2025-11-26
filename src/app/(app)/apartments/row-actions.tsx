@@ -1,5 +1,6 @@
 "use client";
 
+import ApartmentDetailsDrawer from "@/components/apartment-details-drawer";
 import DeleteApartmentDropdownItem from "@/components/delete-apartment-dropdown-item";
 import QrDialog from "@/components/qr-dialog";
 import { Button } from "@/components/ui/button";
@@ -10,24 +11,48 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PenIcon, QrCodeIcon } from "@phosphor-icons/react/dist/ssr";
-import { EllipsisIcon } from "lucide-react";
+import type { Owner, Renter, Status } from "@prisma/client";
+import { EllipsisIcon, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export function RowActions({
   id,
   apartmentNumber,
+  status,
+  owners,
+  renters,
 }: {
   id: string;
   apartmentNumber: number;
+  status: Status;
+  owners: Owner[];
+  renters: Renter[];
 }) {
-  const [open, setIsOpen] = useState<boolean>(false);
+  const [openQr, setIsOpenQr] = useState<boolean>(false);
+  const [openDetails, setIsOpenDetails] = useState<boolean>(false);
 
   return (
-    <>
+    <div className="flex items-center gap-2">
+      <ApartmentDetailsDrawer
+        apartmentNumber={apartmentNumber}
+        owners={owners}
+        renters={renters}
+        status={status}
+        open={openDetails}
+        setIsOpen={(open) => setIsOpenDetails(open)}
+      />
+      <Button
+        variant="ghost"
+        className="data-[state=open]:bg-muted flex size-8 p-0 text-xs"
+        size="icon"
+        onClick={() => setIsOpenDetails(true)}
+      >
+        <SquareArrowOutUpRight />
+      </Button>
       <QrDialog
-        open={open}
-        setIsOpen={setIsOpen}
+        open={openQr}
+        setIsOpen={setIsOpenQr}
         apartmentNumber={apartmentNumber}
       />
       <DropdownMenu>
@@ -44,7 +69,7 @@ export function RowActions({
           <DropdownMenuItem
             onClick={(e) => {
               e.stopPropagation();
-              setIsOpen(true);
+              setIsOpenQr(true);
             }}
           >
             <QrCodeIcon />
@@ -59,6 +84,6 @@ export function RowActions({
           <DeleteApartmentDropdownItem id={id} />
         </DropdownMenuContent>
       </DropdownMenu>
-    </>
+    </div>
   );
 }

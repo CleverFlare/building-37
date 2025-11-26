@@ -23,8 +23,8 @@ import { RowActions } from "./row-actions";
 export type Apartment = {
   id: string;
   apartmentNumber: number;
-  owners: Owner;
-  renters?: Renter;
+  owners: Owner[];
+  renters?: Renter[];
   status: Status;
   createdAt: Date;
 };
@@ -73,9 +73,9 @@ export const columns: ColumnDef<Apartment>[] = [
     header: "المالك",
     cell: ({ row }) => (
       <span className="flex flex-col gap-1">
-        <p>{row.original.owners.name}</p>
+        <p>{row.original.owners[0]?.name ?? "غير معروف"}</p>
         <p className="text-muted-foreground text-sm">
-          {row.original.owners.phone}
+          {row.original.owners[0]?.phone ?? "غير معروف"}
         </p>
       </span>
     ),
@@ -90,7 +90,7 @@ export const columns: ColumnDef<Apartment>[] = [
   {
     id: "ownerName",
     header: "إسم المالك",
-    accessorFn: (row) => row.owners.name,
+    accessorFn: (row) => row.owners[0]?.name ?? "غير معروف",
     meta: {
       label: "إسم المالك",
       mobileType: "title",
@@ -120,7 +120,7 @@ export const columns: ColumnDef<Apartment>[] = [
         original: { owners },
       },
     }) => {
-      return <span dir="ltr">{owners.phone}</span>;
+      return <span dir="ltr">{owners[0]?.phone ?? "غير معروف"}</span>;
     },
     enableColumnFilter: true,
   },
@@ -169,11 +169,11 @@ export const columns: ColumnDef<Apartment>[] = [
     id: "renter",
     header: "المستأجر",
     cell: ({ row }) =>
-      row.original?.renters?.name && row.original?.renters?.phone ? (
+      row.original?.renters?.[0]?.name && row.original?.renters?.[0]?.phone ? (
         <span className="flex flex-col gap-1">
-          <p>{row.original.renters.name}</p>
+          <p>{row.original.renters[0].name}</p>
           <p className="text-muted-foreground text-sm">
-            {row.original.renters.phone}
+            {row.original.renters[0].phone}
           </p>
         </span>
       ) : (
@@ -190,7 +190,7 @@ export const columns: ColumnDef<Apartment>[] = [
   {
     id: "renterName",
     header: "إسم المستأجر",
-    accessorFn: (row) => row.renters?.phone ?? "غير مؤجرة",
+    accessorFn: (row) => row.renters?.[0]?.phone ?? "غير مؤجرة",
     meta: {
       label: "إسم المستأجر",
       mobileType: "title",
@@ -221,7 +221,7 @@ export const columns: ColumnDef<Apartment>[] = [
         original: { renters },
       },
     }) => {
-      return <span dir="ltr">{renters?.phone ?? "غير مؤجرة"}</span>;
+      return <span dir="ltr">{renters?.[0]?.phone ?? "غير مؤجرة"}</span>;
     },
     enableColumnFilter: true,
   },
@@ -246,6 +246,9 @@ export const columns: ColumnDef<Apartment>[] = [
     id: "actions",
     cell: ({ row }) => (
       <RowActions
+        status={row.original.status}
+        owners={row.original.owners}
+        renters={row.original.renters ?? []}
         id={row.original.id}
         apartmentNumber={row.original.apartmentNumber}
       />
