@@ -25,8 +25,8 @@ export type MonthlyFee = {
   paidAmount: number;
   ownerName: string;
   ownerPhone: string;
-  renterName?: string;
-  renterPhone?: string;
+  renterName: string | null;
+  renterPhone: string | null;
   status: Status;
   createdAt: Date;
 };
