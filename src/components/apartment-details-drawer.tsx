@@ -9,7 +9,6 @@ import {
 } from "./ui/drawer";
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,

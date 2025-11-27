@@ -9,6 +9,7 @@ type AuthUser = {
   email: string;
   role: string;
   avatarUrl?: string | null;
+  avatarKey?: string | null;
 } | null;
 
 interface AuthState {

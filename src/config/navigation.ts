@@ -2,11 +2,12 @@ import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 import {
   BuildingApartmentIcon,
   CoinsIcon,
+  GearIcon,
   HouseLineIcon,
   UsersIcon,
 } from "@phosphor-icons/react/ssr";
 
-type Navlink = {
+export type Navlink = {
   id: string;
   label: string;
   href: string;
@@ -14,12 +15,12 @@ type Navlink = {
   activeOn?: (string | RegExp)[];
 };
 
-type NavlinksGroup = {
+export type NavlinksGroup = {
   title: string;
   links: Navlink[];
 };
 
-interface Navigation {
+export interface Navigation {
   groups: NavlinksGroup[];
 }
 
@@ -39,6 +40,12 @@ export const navigation: Navigation = {
           label: "المصروفات الشهرية",
           href: "/monthly-fees",
           icon: CoinsIcon,
+        },
+        {
+          id: "settings",
+          label: "الإعدادات",
+          href: "/settings",
+          icon: GearIcon,
         },
       ],
     },

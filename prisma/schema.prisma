@@ -64,6 +64,7 @@ model User {
   otpHash      String? // hashed OTP
   otpExpires   DateTime?
   avatarUrl    String?
+  avatarKey    String?
   role         Role
   createdAt    DateTime  @default(now())
   // updateAt     DateTime  @updatedAt

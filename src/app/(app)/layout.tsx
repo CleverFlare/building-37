@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { ModeToggle } from "@/components/mode-toggle";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -31,7 +32,9 @@ export default async function Layout({
               <ModeToggle />
             </div>
           </nav>
-          <article className="p-4">{children}</article>
+          <article className="p-4">
+            <ScrollArea>{children}</ScrollArea>
+          </article>
         </main>
       </SidebarInset>
     </SidebarProvider>

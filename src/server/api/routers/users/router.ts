@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { createTRPCRouter, roleProcedure } from "../../trpc";
+import { authedProcedure, createTRPCRouter, roleProcedure } from "../../trpc";
 import { Role } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcrypt";
@@ -161,6 +161,71 @@ export const usersRouter = createTRPCRouter({
         firstName: user.firstName,
         lastName: user.lastName,
         avatarUrl: user.avatarUrl,
+        role: user.role,
+      };
+    }),
+
+  updateProfile: authedProcedure
+    .input(
+      z.object({
+        avatar: z.object({ url: z.string(), key: z.string() }).nullable(),
+        email: z.email(),
+        firstName: z.string(),
+        username: z.string(),
+        lastName: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx: { db, session } }) => {
+      const { firstName, lastName, username, email, avatar } = input;
+
+      // check existing username/email
+      const existing = await db.user.findUnique({
+        where: { id: session.id },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "هذا المستخدم غير مسجل بالنظام",
+        });
+      }
+
+      const usernameUsed = await db.user.findUnique({ where: { username } });
+
+      if (usernameUsed && usernameUsed.id !== session.id)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "إسم المستخدم مستخدم بالفعل",
+        });
+
+      const emailUsed = await db.user.findUnique({ where: { email } });
+
+      if (emailUsed && emailUsed.id !== session.id)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "البريد الإلكتروني مستخدم بالفعل",
+        });
+
+      const user = await db.user.update({
+        where: { id: session.id },
+        data: {
+          firstName,
+          lastName,
+          username,
+          email,
+          avatarUrl: avatar ? avatar.url : null,
+          avatarKey: avatar ? avatar.key : null,
+        },
+      });
+
+      return {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatarUrl: user.avatarUrl,
+        avatarKey: user.avatarKey,
         role: user.role,
       };
     }),

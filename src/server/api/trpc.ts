@@ -9,8 +9,11 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { jwtVerify } from "jose";
 
 import { db } from "@/server/db";
+import { cookies } from "next/headers";
+import { env } from "@/env";
 
 /**
  * 1. CONTEXT
@@ -25,7 +28,31 @@ import { db } from "@/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = { role: "admin", username: "admin" };
+  const cookie = await cookies();
+  const token = cookie.get("OutSiteJWT")?.value;
+
+  let user = null;
+
+  if (token)
+    user = await jwtVerify<{ username: string }>(
+      token,
+      new TextEncoder().encode(env.JWT_PRIVATE),
+    );
+
+  if (user) console.log(user.payload);
+
+  const userRecord = user
+    ? await db.user.findUnique({ where: { username: user.payload.username } })
+    : null;
+
+  const session = userRecord
+    ? {
+        role: userRecord.role,
+        username: userRecord.username,
+        id: user!.payload.sub,
+      }
+    : null;
+
   return {
     db,
     session,
@@ -99,8 +126,9 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 const isAuthed = t.middleware(async ({ ctx, next }) => {
+  console.log(ctx.session);
   if (!ctx.session?.username) {
-    throw new Error("غير مصرح");
+    throw new Error("المستخدم غير مسجل الدخول");
   }
   return next({
     ctx: {
@@ -112,6 +140,7 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
 
 const hasRole = (roles: string[]) =>
   t.middleware(async ({ ctx, next }) => {
+    if (!ctx.session?.role) throw new Error("المستخدم غير مسجل الدخول");
     if (!roles.includes(ctx.session.role)) {
       throw new Error("ممنوع: لا تملك دور كافي");
     }
