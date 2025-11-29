@@ -63,7 +63,7 @@ export function NavUser({
                   {user?.firstName ?? "Unknown"} {user?.lastName}
                 </span>
                 <span className="text-foreground truncate text-xs" dir="ltr">
-                  {user?.username ?? "unknown"}
+                  @{user?.username ?? "unknown"}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -91,7 +91,7 @@ export function NavUser({
                     {user?.firstName ?? "Unknown"} {user?.lastName}
                   </span>
                   <span className="truncate text-xs" dir="ltr">
-                    {user?.username ?? "unknown"}
+                    @{user?.username ?? "unknown"}
                   </span>
                 </div>
               </div>

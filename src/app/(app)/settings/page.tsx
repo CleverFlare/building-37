@@ -20,16 +20,13 @@ export default async function Page() {
           <TabsTrigger value="change-passsword">تغيير كلمة المرور</TabsTrigger>
           <TabsTrigger value="system-settings">إعدادات النظام</TabsTrigger>
         </TabsList>
-        <TabsContent value="personal-info" className="flex flex-col gap-8 py-8">
+        <TabsContent value="personal-info" className="flex flex-col gap-8">
           <EditProfileForm />
         </TabsContent>
-        <TabsContent
-          value="change-passsword"
-          className="flex flex-col gap-8 py-8"
-        >
+        <TabsContent value="change-passsword" className="flex flex-col gap-8">
           <ChangePasswordForm />
         </TabsContent>
-        <TabsContent value="system-settings">
+        <TabsContent value="system-settings" className="flex flex-col gap-8">
           <SystemSettingsForm monthlyFee={monthlyFee!} />
         </TabsContent>
       </Tabs>
