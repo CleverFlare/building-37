@@ -115,6 +115,7 @@ export default function RentersTab({
                         defaultCountry="EG"
                         placeholder="ادخل رقم هاتف صالح..."
                         {...field}
+                        value={field.value ?? undefined}
                       />
                     </FormControl>
                     <FormMessage />
@@ -143,7 +144,7 @@ export default function RentersTab({
                   <FormItem>
                     <FormLabel>تاريخ إنتهاء الإيجار</FormLabel>
                     <FormControl>
-                      <DatePicker {...field} />
+                      <DatePicker {...field} value={field.value ?? undefined} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

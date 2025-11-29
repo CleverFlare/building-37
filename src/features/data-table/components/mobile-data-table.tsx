@@ -38,7 +38,7 @@ export function MobileDataTable<TData>({
         {table.getRowModel().rows.map((row) => {
           const title = row
             .getAllCells()
-            .filter((cell) => !cell.column.columnDef.meta?.hideOnMobile)
+            .filter((cell) => !cell.column.columnDef.meta?.hide?.mobile)
             .find((cell) => cell.column.columnDef.meta?.mobileType === "title");
 
           const description = row

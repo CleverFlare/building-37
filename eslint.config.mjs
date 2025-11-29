@@ -1,4 +1,5 @@
 import { defineConfig, globalIgnores } from "eslint/config";
+// @ts-ignore
 import nextVitals from "eslint-config-next/core-web-vitals";
 
 const eslintConfig = defineConfig([
