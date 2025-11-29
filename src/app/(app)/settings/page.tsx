@@ -1,3 +1,4 @@
+import ChangePasswordForm from "@/components/change-password-form";
 import EditProfileForm from "@/components/edit-profile-form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -37,33 +38,7 @@ export default function Page() {
           value="change-passsword"
           className="flex flex-col gap-8 py-8"
         >
-          <Container>
-            <span className="flex flex-col gap-2">
-              <h2>كلمة المرور الحالية</h2>
-            </span>
-            <div className="flex w-full flex-col justify-between gap-4 sm:flex-row">
-              <Input type="password" placeholder="••••" />
-            </div>
-          </Container>
-          <Separator />
-          <Container>
-            <span className="flex flex-col gap-2">
-              <h2>كلمة المرور الجديدة</h2>
-            </span>
-            <div className="flex w-full flex-col justify-between gap-4 sm:flex-row">
-              <Input type="password" placeholder="••••" />
-            </div>
-          </Container>
-          <Separator />
-          <Container>
-            <span className="flex flex-col gap-2">
-              <h2>تأكيد كلمة المرور الجديدة</h2>
-            </span>
-            <div className="flex w-full flex-col justify-between gap-4 sm:flex-row">
-              <Input type="password" placeholder="••••" />
-            </div>
-          </Container>
-          <Separator />
+          <ChangePasswordForm />
         </TabsContent>
         <TabsContent value="system-settings"></TabsContent>
       </Tabs>

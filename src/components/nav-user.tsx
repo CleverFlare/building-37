@@ -18,13 +18,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  PasswordIcon,
-  PenIcon,
-  UserCircleIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { UserCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function NavUser({
   user,
@@ -101,17 +98,11 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <UserCircleIcon />
-                تغيير صورة الحساب
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <PasswordIcon />
-                تغيير كلمة المرور
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <PenIcon />
-                تعديل بيانات الحساب
+              <DropdownMenuItem asChild>
+                <Link href="/settings">
+                  <UserCircleIcon />
+                  تعديل الملف الشخصي
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -41,12 +41,6 @@ export const navigation: Navigation = {
           href: "/monthly-fees",
           icon: CoinsIcon,
         },
-        {
-          id: "settings",
-          label: "الإعدادات",
-          href: "/settings",
-          icon: GearIcon,
-        },
       ],
     },
     {
@@ -64,6 +58,12 @@ export const navigation: Navigation = {
           href: "/apartments",
           activeOn: ["/apartments", /\/apartments\/(.*?)/gi],
           icon: BuildingApartmentIcon,
+        },
+        {
+          id: "settings",
+          label: "الإعدادات",
+          href: "/settings",
+          icon: GearIcon,
         },
       ],
     },

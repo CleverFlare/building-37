@@ -1,7 +1,6 @@
-// server/auth.router.ts
 import { z } from "zod/v4";
 import bcrypt from "bcrypt";
-import { createTRPCRouter, publicProcedure } from "../../trpc";
+import { authedProcedure, createTRPCRouter, publicProcedure } from "../../trpc";
 import { createJwt } from "@/lib/create-jwt";
 import { generateNumericOtp } from "@/lib/generate-numeric-otp";
 import { TRPCError } from "@trpc/server";
@@ -21,7 +20,6 @@ export const authRouter = createTRPCRouter({
       maxAge: -1,
     });
   }),
-  // register
   register: publicProcedure
     .input(
       z.object({
@@ -90,7 +88,6 @@ export const authRouter = createTRPCRouter({
       };
     }),
 
-  // login
   login: publicProcedure
     .input(
       z.object({
@@ -146,7 +143,7 @@ export const authRouter = createTRPCRouter({
   forgotPassword: publicProcedure
     .input(
       z.object({
-        email: z.string().email(),
+        email: z.email(),
       }),
     )
     .mutation(async ({ input, ctx: { db } }) => {
@@ -180,7 +177,7 @@ export const authRouter = createTRPCRouter({
   verifyOtp: publicProcedure
     .input(
       z.object({
-        email: z.string().email(),
+        email: z.email(),
         otp: z.string().min(4).max(8),
       }),
     )
@@ -188,7 +185,6 @@ export const authRouter = createTRPCRouter({
       const { email, otp } = input;
       const user = await db.user.findUnique({ where: { email } });
 
-      // eslint-disable-next-line
       if (!user || !user.otpHash || !user.otpExpires) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "OTP غير صالح" });
       }
@@ -214,7 +210,7 @@ export const authRouter = createTRPCRouter({
   resetPassword: publicProcedure
     .input(
       z.object({
-        email: z.string().email(),
+        email: z.email(),
         otp: z.string().min(4).max(8),
         newPassword: z.string().min(8),
       }),
@@ -223,7 +219,6 @@ export const authRouter = createTRPCRouter({
       const { email, otp, newPassword } = input;
       const user = await db.user.findUnique({ where: { email } });
 
-      // eslint-disable-next-line
       if (!user || !user.otpHash || !user.otpExpires) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -260,6 +255,37 @@ export const authRouter = createTRPCRouter({
       const token = await createJwt({ sub: user.id, username: user.username });
       return { ok: true, token };
     }),
-});
 
-// ---------------------- helper functions ----------------------
+  changePassword: authedProcedure
+    .input(z.object({ currentPassword: z.string(), newPassword: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { id: ctx.session.id },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "تأكد بأنك مسجل في النظام",
+        });
+      }
+
+      const ok = await bcrypt.compare(input.currentPassword, user.passwordHash);
+      if (!ok) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "كلمة المرور الحالية غير صحيحة",
+        });
+      }
+
+      const newPasswordHash = await bcrypt.hash(
+        input.newPassword,
+        env.PASSWORD_SALT,
+      );
+
+      await ctx.db.user.update({
+        where: { id: ctx.session.id },
+        data: { passwordHash: newPasswordHash },
+      });
+    }),
+});
