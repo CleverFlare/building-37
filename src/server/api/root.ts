@@ -5,6 +5,7 @@ import { apartmentsRouter } from "./routers/apartments/router";
 import { authRouter } from "./routers/auth/router";
 import { usersRouter } from "./routers/users/router";
 import { monthlyFeesRouter } from "./routers/monthly-fees/router";
+import { systemRouter } from "./routers/system/router";
 
 z.config(ar());
 
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   users: usersRouter,
   monthlyFees: monthlyFeesRouter,
+  system: systemRouter,
 });
 
 // export type definition of API

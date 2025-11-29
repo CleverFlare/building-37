@@ -1,22 +1,11 @@
 import ChangePasswordForm from "@/components/change-password-form";
 import EditProfileForm from "@/components/edit-profile-form";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import SystemSettingsForm from "@/components/system-settings-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import type { ComponentProps } from "react";
+import { getGlobalValue } from "@/lib/global-values";
 
-const Container = ({ className, ...props }: ComponentProps<"div">) => (
-  <div
-    className={cn(
-      "mx-auto grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3",
-      className,
-    )}
-    {...props}
-  />
-);
-
-export default function Page() {
+export default async function Page() {
+  const monthlyFee = await getGlobalValue("monthlyFee");
   return (
     <div className="flex h-full w-full flex-col gap-8 overflow-y-auto">
       <div className="flex flex-col gap-2">
@@ -40,7 +29,9 @@ export default function Page() {
         >
           <ChangePasswordForm />
         </TabsContent>
-        <TabsContent value="system-settings"></TabsContent>
+        <TabsContent value="system-settings">
+          <SystemSettingsForm monthlyFee={monthlyFee!} />
+        </TabsContent>
       </Tabs>
     </div>
   );

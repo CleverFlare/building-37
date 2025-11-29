@@ -11,7 +11,6 @@ import { useDataTable } from "@/features/data-table/hooks/use-data-table";
 import { TableActionBar } from "./action-bar";
 import type { MonthlyFee } from "./columns";
 import MonthYearPicker from "@/components/nuqs-month-picker";
-import MonthlyFeeDialog from "@/components/monthly-fee-dialog";
 import QrScanDialog from "@/components/qr-scan-dialog";
 
 interface DataTableProps<TData, TValue> {
@@ -24,7 +23,6 @@ export function MonthlyFeesTable<TValue>({
   columns,
   data,
   pageCount,
-  monthlyFee,
 }: DataTableProps<MonthlyFee, TValue> & { monthlyFee: number }) {
   const { table, shallow, debounceMs, throttleMs } = useDataTable({
     pageCount,
@@ -44,7 +42,6 @@ export function MonthlyFeesTable<TValue>({
     <DataTable table={table} actionBar={<TableActionBar table={table} />}>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-1 items-center gap-2">
-          <MonthlyFeeDialog value={monthlyFee} />
           <MonthYearPicker />
         </div>
         <div className="flex items-center gap-4">
