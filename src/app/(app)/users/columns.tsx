@@ -13,10 +13,10 @@ import {
   CalendarIcon,
   EnvelopeIcon,
   IdentificationCardIcon,
-  MailboxIcon,
   RankingIcon,
   UserIcon,
 } from "@phosphor-icons/react/dist/ssr";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export type User = {
   id: string;
@@ -25,6 +25,7 @@ export type User = {
   lastName: string;
   email: string;
   role: Role;
+  avatarUrl: string | null;
   createdAt: Date;
 };
 
@@ -58,6 +59,25 @@ export const columns: ColumnDef<User>[] = [
     meta: {
       mobileType: "select",
     },
+  },
+  {
+    id: "avatar",
+    cell: ({ row }) => (
+      <Avatar className="rounded-md">
+        <AvatarImage src={row.original.avatarUrl ?? undefined} />
+        <AvatarFallback className="rounded-md text-xs">
+          {row.original.firstName?.[0] ?? "M"}{" "}
+          {row.original.lastName?.[0] ?? "T"}
+        </AvatarFallback>
+      </Avatar>
+    ),
+    meta: {
+      label: "إسم المستخدم",
+      variant: "text",
+      mobileType: "description",
+    },
+    enableColumnFilter: true,
+    size: 20,
   },
   {
     accessorKey: "username",
