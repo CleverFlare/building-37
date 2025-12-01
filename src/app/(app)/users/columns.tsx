@@ -76,7 +76,6 @@ export const columns: ColumnDef<User>[] = [
       variant: "text",
       mobileType: "description",
     },
-    enableColumnFilter: true,
     size: 20,
   },
   {
