@@ -37,7 +37,7 @@ export const navigation: Navigation = {
         },
         {
           id: "monthly-fees",
-          label: "المصروفات الشهرية",
+          label: "التحصيلات الشهرية",
           href: "/monthly-fees",
           icon: CoinsIcon,
         },
