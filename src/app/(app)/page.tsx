@@ -76,6 +76,15 @@ export default async function Page() {
       <h2 className="text-3xl font-bold">مرحباً بك يا، محمد</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <StatCard
+          title="الميزانية الحالية"
+          value={`${totalBalance - totalYearExpenses} جنية`}
+          icon={<BankIcon />}
+        >
+          <p className="text-muted-foreground text-sm">
+            إجمالي التحصيلات بعد خصم المصروفات هذا العام
+          </p>
+        </StatCard>
+        <StatCard
           title="المصروف الشهري للشقة"
           value={`${monthlyFee} جنية`}
           icon={<CoinsIcon />}
@@ -100,15 +109,6 @@ export default async function Page() {
         >
           <p className="text-muted-foreground text-sm">
             الشقق التي دفعت المصروف الشهري هذا الشهر
-          </p>
-        </StatCard>
-        <StatCard
-          title="الميزانية الحالية"
-          value={`${totalBalance - totalYearExpenses} جنية`}
-          icon={<BankIcon />}
-        >
-          <p className="text-muted-foreground text-sm">
-            إجمالي التحصيلات بعد خصم المصروفات هذا العام
           </p>
         </StatCard>
       </div>
