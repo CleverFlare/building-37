@@ -21,19 +21,28 @@ export default async function Page() {
 
   const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-  const [monthlyFees, expenseAggregate] = await Promise.all([
-    db.monthlyFee.findMany({
-      where: {
-        createdAt: { gt: startOfDay(thisMonthStart), lt: endOfDay(thisMonthEnd) },
-      },
-    }),
-    db.expense.aggregate({
-      where: { month: today.getMonth(), year: today.getFullYear() },
-      _sum: { amount: true },
-    }),
-  ]);
+  const [monthlyFees, monthExpenseAggregate, yearExpenseAggregate] =
+    await Promise.all([
+      db.monthlyFee.findMany({
+        where: {
+          createdAt: {
+            gt: startOfDay(thisMonthStart),
+            lt: endOfDay(thisMonthEnd),
+          },
+        },
+      }),
+      db.expense.aggregate({
+        where: { month: today.getMonth(), year: today.getFullYear() },
+        _sum: { amount: true },
+      }),
+      db.expense.aggregate({
+        where: { year: today.getFullYear() },
+        _sum: { amount: true },
+      }),
+    ]);
 
-  const totalMonthlyExpenses = expenseAggregate._sum.amount ?? 0;
+  const totalMonthlyExpenses = monthExpenseAggregate._sum.amount ?? 0;
+  const totalYearExpenses = yearExpenseAggregate._sum.amount ?? 0;
 
   const totalMonthlyFees = monthlyFees.reduce(
     (prev, next) => prev + next.paidAmount,
@@ -95,11 +104,11 @@ export default async function Page() {
         </StatCard>
         <StatCard
           title="الميزانية الحالية"
-          value={`${totalBalance} جنية`}
+          value={`${totalBalance - totalYearExpenses} جنية`}
           icon={<BankIcon />}
         >
           <p className="text-muted-foreground text-sm">
-            إجماعلي اموال العمارة المحصلة بمختلف الطرق
+            إجمالي التحصيلات بعد خصم المصروفات هذا العام
           </p>
         </StatCard>
       </div>
