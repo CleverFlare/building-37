@@ -52,7 +52,7 @@ export default function RentersTab({
       {!isEmpty &&
         rentersList.fields.map((field, index) => (
           <div
-            className="grid w-full grid-cols-1 items-center gap-x-8 gap-y-4 rounded-lg bg-white p-4 shadow-xs md:grid-cols-[auto_1fr]"
+            className="bg-background grid w-full grid-cols-1 items-center gap-x-8 gap-y-4 rounded-lg p-4 shadow-xs md:grid-cols-[auto_1fr]"
             key={field.id}
           >
             <span className="col-span-full flex flex-col gap-4">
@@ -60,12 +60,15 @@ export default function RentersTab({
                 <h3 className="text-xl font-bold">
                   المستأجر {toArabicOrdinal(index + 1)}
                 </h3>
-                <button
-                  className="text-muted-foreground flex size-8 items-center justify-center rounded-md hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50"
+                <Button
+                  size="icon-sm"
+                  variant="ghost"
+                  className="hover:bg-destructive/10! hover:text-destructive!"
+                  disabled={index === 0}
                   onClick={() => rentersList.remove(index)}
                 >
                   <TrashSimpleIcon />
-                </button>
+                </Button>
               </span>
               <Separator />
             </span>

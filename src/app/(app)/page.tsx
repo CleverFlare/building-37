@@ -36,9 +36,8 @@ export default async function Page() {
 
   const totalDueMonthlyFees = apartmentsCount * (monthlyFee ?? 1);
 
-  const dueMonthlyFeePercentage = Math.floor(
-    (totalMonthlyFees / totalDueMonthlyFees) * 100,
-  );
+  const dueMonthlyFeePercentage =
+    Math.floor((totalMonthlyFees / totalDueMonthlyFees) * 100) || 0;
 
   const balances = await db.balance.findMany({
     where: { year: new Date().getFullYear() },
