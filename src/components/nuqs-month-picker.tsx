@@ -104,13 +104,19 @@ export default function MonthYearPicker({
       </PopoverTrigger>
       <PopoverContent className="w-[400px]" align="start">
         <div className="flex justify-between gap-2">
-          <Button variant="ghost" onClick={() => setYear((prev) => --prev)}>
+          <Button
+            variant="ghost"
+            onClick={() => setYear((prev) => --prev, { shallow: false })}
+          >
             <ChevronRightIcon />
           </Button>
           <span className="flex w-full items-center justify-center">
             {year}
           </span>
-          <Button variant="ghost" onClick={() => setYear((prev) => ++prev)}>
+          <Button
+            variant="ghost"
+            onClick={() => setYear((prev) => ++prev, { shallow: false })}
+          >
             <ChevronLeftIcon />
           </Button>
         </div>
@@ -125,7 +131,7 @@ export default function MonthYearPicker({
                   : "hover:bg-input/50",
               )}
               key={m.value}
-              onClick={() => setMonth(m.value)}
+              onClick={() => setMonth(m.value, { shallow: false })}
             >
               {m.label}
             </button>
@@ -138,8 +144,8 @@ export default function MonthYearPicker({
             variant="outline"
             className="w-max"
             onClick={async () => {
-              await setYear(new Date().getFullYear());
-              await setMonth(new Date().getMonth());
+              await setYear(new Date().getFullYear(), { shallow: false });
+              await setMonth(new Date().getMonth(), { shallow: false });
             }}
           >
             الإعدادات الإفتراضية

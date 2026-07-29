@@ -4,6 +4,7 @@ import {
   CoinsIcon,
   GearIcon,
   HouseLineIcon,
+  ReceiptIcon,
   UsersIcon,
 } from "@phosphor-icons/react/ssr";
 
@@ -40,6 +41,12 @@ export const navigation: Navigation = {
           label: "التحصيلات الشهرية",
           href: "/monthly-fees",
           icon: CoinsIcon,
+        },
+        {
+          id: "expenses",
+          label: "المصروفات",
+          href: "/expenses",
+          icon: ReceiptIcon,
         },
       ],
     },

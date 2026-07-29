@@ -97,6 +97,16 @@ model Balance {
   amount Int
 }
 
+model Expense {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  label     String
+  amount    Int
+  month     Int
+  year      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum Status {
   vacant
   occupied

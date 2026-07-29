@@ -8,7 +8,7 @@ import {
   BankIcon,
   BuildingIcon,
   CoinsIcon,
-  UsersIcon,
+  ReceiptIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { endOfDay, startOfDay } from "date-fns";
 
@@ -21,11 +21,19 @@ export default async function Page() {
 
   const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-  const monthlyFees = await db.monthlyFee.findMany({
-    where: {
-      createdAt: { gt: startOfDay(thisMonthStart), lt: endOfDay(thisMonthEnd) },
-    },
-  });
+  const [monthlyFees, expenseAggregate] = await Promise.all([
+    db.monthlyFee.findMany({
+      where: {
+        createdAt: { gt: startOfDay(thisMonthStart), lt: endOfDay(thisMonthEnd) },
+      },
+    }),
+    db.expense.aggregate({
+      where: { month: today.getMonth(), year: today.getFullYear() },
+      _sum: { amount: true },
+    }),
+  ]);
+
+  const totalMonthlyExpenses = expenseAggregate._sum.amount ?? 0;
 
   const totalMonthlyFees = monthlyFees.reduce(
     (prev, next) => prev + next.paidAmount,
@@ -33,11 +41,6 @@ export default async function Page() {
   );
 
   const apartmentsCount = await db.apartment.count();
-
-  const totalDueMonthlyFees = apartmentsCount * (monthlyFee ?? 1);
-
-  const dueMonthlyFeePercentage =
-    Math.floor((totalMonthlyFees / totalDueMonthlyFees) * 100) || 0;
 
   const balances = await db.balance.findMany({
     where: { year: new Date().getFullYear() },
@@ -73,12 +76,12 @@ export default async function Page() {
           </p>
         </StatCard>
         <StatCard
-          title="نسبة التحصيل"
-          value={`${dueMonthlyFeePercentage}%`}
-          icon={<UsersIcon />}
+          title="مصروفات الشهر"
+          value={`${totalMonthlyExpenses} جنية`}
+          icon={<ReceiptIcon />}
         >
           <p className="text-muted-foreground text-sm">
-            نسبة المصروفات الشهرية المحصلة هذا الشهر
+            إجمالي المصروفات المسجلة هذا الشهر
           </p>
         </StatCard>
         <StatCard
