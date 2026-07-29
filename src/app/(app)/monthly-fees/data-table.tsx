@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { DataTableFilterList } from "@/features/data-table/components/data-table-filter-list";
 import { Button } from "@/components/ui/button";
-import { QrCodeIcon } from "@phosphor-icons/react/dist/ssr";
+import { PencilSimpleIcon, QrCodeIcon } from "@phosphor-icons/react/dist/ssr";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/features/data-table/components/data-table";
 import { useDataTable } from "@/features/data-table/hooks/use-data-table";
@@ -12,6 +13,14 @@ import { TableActionBar } from "./action-bar";
 import type { MonthlyFee } from "./columns";
 import MonthYearPicker from "@/components/nuqs-month-picker";
 import QrScanDialog from "@/components/qr-scan-dialog";
+import ManualFeeDialog from "@/components/manual-fee-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDownIcon } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -38,6 +47,9 @@ export function MonthlyFeesTable<TValue>({
     },
   });
 
+  const [openManual, setOpenManual] = useState(false);
+  const [openQr, setOpenQr] = useState(false);
+
   return (
     <DataTable table={table} actionBar={<TableActionBar table={table} />}>
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -55,12 +67,27 @@ export function MonthlyFeesTable<TValue>({
             orientation="vertical"
             className="data-[orientation=vertical]:h-5"
           />
-          <QrScanDialog>
-            <Button>
-              <QrCodeIcon />
-              مسح رمز QR
-            </Button>
-          </QrScanDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button>
+                تسجيل دفع
+                <ChevronDownIcon className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={() => setOpenManual(true)}>
+                <PencilSimpleIcon />
+                إدخال يدوي
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setOpenQr(true)}>
+                <QrCodeIcon />
+                مسح رمز QR
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <ManualFeeDialog open={openManual} onOpenChange={setOpenManual} />
+          <QrScanDialog open={openQr} onOpenChange={setOpenQr} />
         </div>
       </div>
     </DataTable>

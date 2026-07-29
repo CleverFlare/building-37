@@ -96,6 +96,30 @@ export const monthlyFeesRouter = createTRPCRouter({
       });
     }),
 
+  getUnpaidApartments: roleProcedure(["admin"]).query(async ({ ctx }) => {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    const paidThisMonth = await ctx.db.monthlyFee.findMany({
+      where: { createdAt: { gte: startOfMonth, lt: startOfNextMonth } },
+      select: { apartmentNumber: true },
+    });
+
+    const paidNumbers = paidThisMonth.map((f) => f.apartmentNumber);
+
+    const apartments = await ctx.db.apartment.findMany({
+      where: { apartmentNumber: { notIn: paidNumbers } },
+      include: { owners: { take: 1, orderBy: { ownershipStartAt: "desc" } } },
+      orderBy: { apartmentNumber: "asc" },
+    });
+
+    return apartments.map((a) => ({
+      apartmentNumber: a.apartmentNumber,
+      ownerName: a.owners[0]?.name ?? "غير معروف",
+    }));
+  }),
+
   delete: roleProcedure(["admin"])
     .input(z.object({ ids: z.array(z.string()) }))
     .mutation(async ({ input, ctx }) => {

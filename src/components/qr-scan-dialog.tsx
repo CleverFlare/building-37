@@ -19,7 +19,15 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Scanner } from "@yudiel/react-qr-scanner";
 
-export default function QrScanDialog({ children }: { children: ReactNode }) {
+export default function QrScanDialog({
+  children,
+  open,
+  onOpenChange,
+}: {
+  children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}) {
   const [isCameraAvailable, setIsCameraAvailable] = useState(true);
 
   const closeRef = useRef<HTMLButtonElement | null>(null);
@@ -49,7 +57,11 @@ export default function QrScanDialog({ children }: { children: ReactNode }) {
   const { mutateAsync } = api.monthlyFees.scanApartment.useMutation({
     onSuccess: () => {
       router.refresh();
-      closeRef.current?.click();
+      if (onOpenChange) {
+        onOpenChange(false);
+      } else {
+        closeRef.current?.click();
+      }
     },
     onError: (error) => {
       toast.error(error.message);
@@ -61,8 +73,8 @@ export default function QrScanDialog({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Credenza>
-      <CredenzaTrigger asChild>{children}</CredenzaTrigger>
+    <Credenza open={open} onOpenChange={onOpenChange}>
+      {children && <CredenzaTrigger asChild>{children}</CredenzaTrigger>}
       <CredenzaContent>
         <CredenzaHeader>
           <span className="border-input bg-input/50 relative mx-auto mb-2 flex size-12 items-center justify-center overflow-hidden rounded-full border dark:bg-[#0f0f0f] dark:text-white">
