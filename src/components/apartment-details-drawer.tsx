@@ -251,12 +251,12 @@ function PersonCard({
 
       {idPhoto ? (
         <Link
-          href={idPhoto}
+          href={`/api/files?key=${idPhoto}`}
           target="_blank"
           className="bg-muted flex aspect-video w-[150px] items-center justify-center overflow-hidden rounded-lg"
         >
           <img
-            src={idPhoto}
+            src={`/api/files?key=${idPhoto}`}
             alt="ID Photo"
             width={400}
             height={1000}

@@ -8,7 +8,6 @@ type AuthUser = {
   lastName: string;
   email: string;
   role: string;
-  avatarUrl?: string | null;
   avatarKey?: string | null;
 } | null;
 

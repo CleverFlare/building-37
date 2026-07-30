@@ -25,7 +25,7 @@ export type User = {
   lastName: string;
   email: string;
   role: Role;
-  avatarUrl: string | null;
+  avatarKey: string | null;
   createdAt: Date;
 };
 
@@ -64,7 +64,7 @@ export const columns: ColumnDef<User>[] = [
     id: "avatar",
     cell: ({ row }) => (
       <Avatar className="rounded-md">
-        <AvatarImage src={row.original.avatarUrl ?? undefined} />
+        <AvatarImage src={row.original.avatarKey ? `/api/files?key=${row.original.avatarKey}` : undefined} />
         <AvatarFallback className="rounded-md text-xs">
           {row.original.firstName?.[0] ?? "M"}{" "}
           {row.original.lastName?.[0] ?? "T"}

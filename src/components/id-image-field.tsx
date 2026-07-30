@@ -59,7 +59,9 @@ const IdImageField = forwardRef<HTMLInputElement, IdImageFieldProps>(
     };
 
     const parseUrl = (value: string | File) =>
-      typeof value === "string" ? value : URL.createObjectURL(value);
+      typeof value === "string"
+        ? `/api/files?key=${value}`
+        : URL.createObjectURL(value);
 
     const imageUrl = value ? parseUrl(value) : undefined;
 

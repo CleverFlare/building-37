@@ -14,10 +14,9 @@ export async function uploadFile(file: File) {
   if (!res.ok) throw new Error("Upload failed");
 
   const data = (await res.json()) as {
-    files: { key: string; url: string; name: string };
+    files: { key: string; name: string };
   };
 
-  // If only one file was uploaded, return just that file for convenience
   return data.files;
 }
 
@@ -35,7 +34,7 @@ export async function replaceFile(key: string, file: File) {
   });
 
   if (!res.ok) throw new Error("Replace failed");
-  return (await res.json()) as { key: string; url: string };
+  return (await res.json()) as { key: string };
 }
 
 /**

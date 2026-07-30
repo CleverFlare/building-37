@@ -30,13 +30,14 @@ export const env = createEnv({
       .transform((v) => +v)
       .pipe(z.number()),
 
-    R2_ENDPOINT: z.string(),
-    API_TOKEN: z.string(),
-    AWS_ACCESS_KEY_ID: z.string(),
-    AWS_SECRET_ACCESS_KEY: z.string(),
-    R2_BUCKET_NAME: z.string(),
-    R2_BUCKET: z.string(),
-    R2_PUBLIC_SERVE_URL: z.string(),
+    OBJECT_STORAGE_ACCESS_KEY: z.string(),
+    OBJECT_STORAGE_SECRET_KEY: z.string(),
+    OBJECT_STORAGE_BUCKET_NAME: z.string(),
+    OBJECT_STORAGE_ENDPOINT: z.string(),
+
+    MONGO_ROOT_USER: z.string(),
+    MONGO_ROOT_PASSWORD: z.string(),
+    MONGO_DB_NAME: z.string(),
   },
 
   /**
@@ -61,13 +62,14 @@ export const env = createEnv({
     PASSWORD_SALT: process.env.PASSWORD_SALT,
     DEFAULT_MONTHLY_FEE: process.env.DEFAULT_MONTHLY_FEE,
 
-    R2_ENDPOINT: process.env.R2_ENDPOINT,
-    API_TOKEN: process.env.API_TOKEN,
-    AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
-    AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
-    R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
-    R2_BUCKET: process.env.R2_BUCKET,
-    R2_PUBLIC_SERVE_URL: process.env.R2_PUBLIC_SERVE_URL,
+    OBJECT_STORAGE_ACCESS_KEY: process.env.OBJECT_STORAGE_ACCESS_KEY,
+    OBJECT_STORAGE_SECRET_KEY: process.env.OBJECT_STORAGE_SECRET_KEY,
+    OBJECT_STORAGE_BUCKET_NAME: process.env.OBJECT_STORAGE_BUCKET_NAME,
+    OBJECT_STORAGE_ENDPOINT: process.env.OBJECT_STORAGE_ENDPOINT,
+
+    MONGO_ROOT_USER: process.env.MONGO_ROOT_USER,
+    MONGO_ROOT_PASSWORD: process.env.MONGO_ROOT_PASSWORD,
+    MONGO_DB_NAME: process.env.MONGO_DB_NAME,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

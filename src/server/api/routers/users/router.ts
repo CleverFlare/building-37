@@ -168,7 +168,7 @@ export const usersRouter = createTRPCRouter({
   updateProfile: authedProcedure
     .input(
       z.object({
-        avatar: z.object({ url: z.string(), key: z.string() }).nullable(),
+        avatar: z.object({ key: z.string() }).nullable(),
         email: z.email(),
         firstName: z.string(),
         username: z.string(),
@@ -213,8 +213,8 @@ export const usersRouter = createTRPCRouter({
           lastName,
           username,
           email,
-          avatarUrl: avatar ? avatar.url : null,
           avatarKey: avatar ? avatar.key : null,
+          avatarUrl: null,
         },
       });
 
@@ -224,7 +224,6 @@ export const usersRouter = createTRPCRouter({
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        avatarUrl: user.avatarUrl,
         avatarKey: user.avatarKey,
         role: user.role,
       };

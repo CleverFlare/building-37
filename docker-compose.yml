@@ -1,0 +1,172 @@
+# -----------------------------------------------------------------------------
+# Garage (S3-compatible object storage) + MongoDB for a Next.js app.
+# Designed to be dropped into a Dokploy "Docker Compose" application.
+#
+# BEFORE FIRST DEPLOY:
+#   1. Copy .env.example to .env and fill in real secrets
+#      (or set them as Environment Variables in the Dokploy UI instead).
+#   2. Edit garage.toml and replace the three REPLACE_WITH_* placeholders
+#      with values from `openssl rand -hex 32` / `openssl rand -base64 32`.
+#   3. After the stack is up, run the one-time Garage layout setup
+#      (see the note at the bottom of this file / the README).
+# -----------------------------------------------------------------------------
+
+services:
+  garage:
+    image: dxflrs/garage:v2.3.0
+    container_name: garage
+    restart: unless-stopped
+    environment:
+      # Default S3 access key/secret + bucket auto-created on first boot.
+      # Leave these set (Garage only uses them on a fresh, empty node).
+      GARAGE_DEFAULT_ACCESS_KEY: ${GARAGE_ACCESS_KEY}
+      GARAGE_DEFAULT_SECRET_KEY: ${GARAGE_SECRET_KEY}
+      GARAGE_DEFAULT_BUCKET: ${GARAGE_BUCKET_NAME:-app-storage}
+    command: ["/garage", "server", "--single-node", "--default-bucket"]
+    volumes:
+      - ./garage.toml:/etc/garage.toml:ro
+      - garage_meta:/var/lib/garage/meta
+      - garage_data:/var/lib/garage/data
+    ports:
+      # S3 API - your Next.js app talks to this
+      - "3900:3900"
+      # RPC - internal cluster communication, not needed for a single node
+      # but Garage listens on it regardless
+      - "3901:3901"
+      # Static website hosting for buckets (optional, remove if unused)
+      - "3902:3902"
+      # Admin API (health checks, key/bucket management)
+      - "3903:3903"
+    healthcheck:
+      test: ["CMD", "/garage", "status"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - app-network
+
+  # One-shot job: generates the internal-auth keyfile that Mongo requires
+  # whenever --auth and --replSet are used together (even for one node).
+  # Writes into a named volume so mongodb can mount it with the right perms.
+  mongo-keyfile-init:
+    image: mongo:7
+    container_name: mongo-keyfile-init
+    restart: "no"
+    entrypoint:
+      - bash
+      - -c
+      - |
+        set -e
+        if [ ! -f /keyfile-data/mongo-keyfile ]; then
+          head -c 756 /dev/urandom | base64 -w 0 > /keyfile-data/mongo-keyfile
+        fi
+        chmod 400 /keyfile-data/mongo-keyfile
+        chown 999:999 /keyfile-data/mongo-keyfile
+    volumes:
+      - mongo_keyfile:/keyfile-data
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: unless-stopped
+    depends_on:
+      mongo-keyfile-init:
+        condition: service_completed_successfully
+    # Prisma's MongoDB connector requires a replica set (it uses transactions
+    # under the hood), even for a single node. --replSet enables that.
+    # --keyFile is required by Mongo whenever --auth (implied by the root
+    # user/password below) is combined with --replSet.
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/keyfile-data/mongo-keyfile",
+      ]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME:-app}
+    volumes:
+      - mongo_data:/data/db
+      - mongo_keyfile:/keyfile-data:ro
+    ports:
+      # Only expose this publicly if you need external DB access.
+      # Otherwise remove and let the app reach it over app-network only.
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - app-network
+
+  # One-shot job: initializes the replica set on first boot, then exits.
+  # Safe to leave running on every `docker compose up` -- it's a no-op if
+  # the replica set already exists.
+  mongo-init:
+    image: mongo:7
+    container_name: mongo-init
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: "no"
+    entrypoint:
+      - bash
+      - -c
+      - |
+        mongosh --host mongodb:27017 \
+          -u "$$MONGO_ROOT_USER" -p "$$MONGO_ROOT_PASSWORD" --authenticationDatabase admin \
+          --eval "try { rs.status(); print('replica set already initialized'); } catch (e) { rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongodb:27017'}]}); print('replica set initialized'); }"
+    environment:
+      MONGO_ROOT_USER: ${MONGO_ROOT_USER}
+      MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    networks:
+      - app-network
+
+volumes:
+  garage_meta:
+  garage_data:
+  mongo_data:
+  mongo_keyfile:
+
+networks:
+  app-network:
+    driver: bridge
+# -----------------------------------------------------------------------------
+# One-time Garage setup (run once, after the container is healthy):
+#
+#   docker exec -it garage /garage layout assign -z dc1 -c 1 <node-id>
+#   docker exec -it garage /garage layout apply --version 1
+#
+# Get <node-id> from:
+#   docker exec -it garage /garage status
+#
+# If you used GARAGE_DEFAULT_ACCESS_KEY/SECRET_KEY + --default-bucket above,
+# Garage creates the key and bucket automatically on first boot, so you can
+# often skip manual key/bucket creation entirely -- just apply the layout.
+#
+# Your Next.js app then talks to Garage as a standard S3 client, e.g.:
+#   endpoint:          http://<your-vps-host-or-service-name>:3900
+#   region:             garage
+#   accessKeyId:        value of GARAGE_ACCESS_KEY
+#   secretAccessKey:    value of GARAGE_SECRET_KEY
+#   forcePathStyle:     true   (important -- Garage needs path-style requests
+#                                unless you've set up virtual-host DNS)
+#
+# Prisma DATABASE_URL for the MongoDB container (note replicaSet=rs0 and
+# authSource=admin -- both required, or Prisma will fail to connect/write):
+#
+#   DATABASE_URL="mongodb://<MONGO_ROOT_USER>:<MONGO_ROOT_PASSWORD>@mongodb:27017/<MONGO_DB_NAME>?authSource=admin&replicaSet=rs0"
+#
+# Use host "mongodb" (the compose service name) if your Next.js app runs in
+# this same compose stack/network. If it runs elsewhere, use the VPS's
+# public host/IP instead and make sure port 27017 is reachable.
+# -----------------------------------------------------------------------------

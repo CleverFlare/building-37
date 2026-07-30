@@ -30,7 +30,7 @@ export function NavUser({
     firstName: string;
     lastName: string;
     username: string;
-    avatarUrl?: string | null;
+    avatarKey?: string | null;
   } | null;
 }) {
   const { isMobile } = useSidebar();
@@ -51,7 +51,7 @@ export function NavUser({
             >
               <Avatar className="bg-background h-8 w-8 rounded-md">
                 <AvatarImage
-                  src={user?.avatarUrl ?? undefined}
+                  src={user?.avatarKey ? `/api/files?key=${user.avatarKey}` : undefined}
                   alt={user?.firstName}
                 />
                 <AvatarFallback className="rounded-md">
@@ -79,7 +79,7 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={user?.avatarUrl ?? undefined}
+                    src={user?.avatarKey ? `/api/files?key=${user.avatarKey}` : undefined}
                     alt={user?.firstName}
                   />
                   <AvatarFallback className="rounded-lg">

@@ -86,7 +86,7 @@ export function AddApartmentForm() {
 
           return {
             ...person,
-            idPhoto: file.url,
+            idPhoto: file.key,
             idPhotoKey: file.key,
           };
         }),

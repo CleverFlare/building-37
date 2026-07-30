@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Upload } from "@aws-sdk/lib-storage";
 import pLimit from "p-limit";
 import { env } from "@/env";
@@ -8,6 +9,31 @@ import { r2 } from "@/server/r2";
 const CONCURRENCY_LIMIT = 5;
 const QUEUE_SIZE = 10; // parts uploaded in parallel per file
 const PART_SIZE = 8 * 1024 * 1024; // 8MB per file
+const SIGNED_URL_EXPIRES = 3600; // 1 hour
+
+// ---------- GET: Generate a presigned URL for a key ----------
+export async function GET(req: NextRequest) {
+  const key = req.nextUrl.searchParams.get("key");
+
+  if (!key)
+    return NextResponse.json({ error: "Missing key" }, { status: 400 });
+
+  try {
+    const signedUrl = await getSignedUrl(
+      r2,
+      new GetObjectCommand({
+        Bucket: env.OBJECT_STORAGE_BUCKET_NAME,
+        Key: key,
+      }),
+      { expiresIn: SIGNED_URL_EXPIRES },
+    );
+
+    return NextResponse.redirect(signedUrl);
+  } catch (err) {
+    console.error("SIGN ERROR:", err);
+    return NextResponse.json({ error: "Failed to sign URL" }, { status: 500 });
+  }
+}
 
 // ---------- POST: Upload multiple files ----------
 export async function POST(req: NextRequest) {
@@ -29,7 +55,7 @@ export async function POST(req: NextRequest) {
       const upload = new Upload({
         client: r2,
         params: {
-          Bucket: env.R2_BUCKET_NAME,
+          Bucket: env.OBJECT_STORAGE_BUCKET_NAME,
           Key: key,
           Body: buffer,
           ContentType: file.type,
@@ -41,8 +67,7 @@ export async function POST(req: NextRequest) {
 
       await upload.done();
 
-      const url = `${env.R2_PUBLIC_SERVE_URL}/${env.R2_BUCKET_NAME}/${key}`;
-      return { key, url, name: file.name };
+      return { key, name: file.name };
     });
 
     return NextResponse.json({ files: upload });
@@ -74,7 +99,7 @@ export async function PUT(req: NextRequest) {
       const upload = new Upload({
         client: r2,
         params: {
-          Bucket: env.R2_BUCKET_NAME,
+          Bucket: env.OBJECT_STORAGE_BUCKET_NAME,
           Key: key,
           Body: buffer,
           ContentType: file.type,
@@ -86,11 +111,10 @@ export async function PUT(req: NextRequest) {
 
       await upload.done();
 
-      const url = `${env.R2_PUBLIC_SERVE_URL}/${env.R2_BUCKET_NAME}/${key}`;
-      return { key, url, name: file.name };
+      return { key, name: file.name };
     });
 
-    return NextResponse.json({ key: upload.key, url: upload.url });
+    return NextResponse.json({ key: upload.key });
   } catch (err) {
     console.error("REPLACE ERROR:", err);
     return NextResponse.json({ error: "Replace failed" }, { status: 500 });
@@ -107,7 +131,7 @@ export async function DELETE(req: NextRequest) {
 
     await r2.send(
       new DeleteObjectCommand({
-        Bucket: env.R2_BUCKET_NAME,
+        Bucket: env.OBJECT_STORAGE_BUCKET_NAME,
         Key: key,
       }),
     );

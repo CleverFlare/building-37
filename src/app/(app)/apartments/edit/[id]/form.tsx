@@ -96,7 +96,7 @@ export function EditApartmentForm({
               ? await replaceFile(initialRecord?.idPhotoKey!, person.idPhoto)
               : await uploadFile(person.idPhoto);
 
-            return { ...person, idPhoto: file.url, idPhotoKey: file.key };
+            return { ...person, idPhoto: file.key, idPhotoKey: file.key };
           }
 
           // Case 3: Existing string photo, no change

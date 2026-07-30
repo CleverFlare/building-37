@@ -1,0 +1,31 @@
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+db_engine = "sqlite"
+
+# Single-node setup -> replication_factor = 1.
+# If you later add more Garage nodes for redundancy, bump this to 3.
+replication_factor = 1
+
+rpc_bind_addr = "[::]:3901"
+rpc_public_addr = "127.0.0.1:3901"
+
+# REQUIRED: replace with the output of `openssl rand -hex 32`
+# (You can alternatively delete this line and set it via the
+# GARAGE_RPC_SECRET environment variable in docker-compose.yml instead.)
+rpc_secret = "cedeceab4017643b20d1f6be68cddf75bde8cf5e96f2e190f559866d492c77a0"
+
+[s3_api]
+s3_region = "garage"
+api_bind_addr = "[::]:3900"
+root_domain = ".s3.garage.local"
+
+[s3_web]
+bind_addr = "[::]:3902"
+root_domain = ".web.garage.local"
+index = "index.html"
+
+[admin]
+api_bind_addr = "[::]:3903"
+# REQUIRED: replace with the output of `openssl rand -base64 32`
+admin_token = "KDJEnAVk5Z1cZJ9Yyb5Nj0qr1qOVdki+wD+WvHtyCu0="
+metrics_token = "v3GUWflRhabUVTDT5Z1u6KWXuB74GiGvkKq2HZ3NckY="

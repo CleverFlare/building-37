@@ -17,7 +17,7 @@ import { toast } from "sonner";
 const formSchema = z.object({
   avatar: z.object({
     file: z.file().nullable(),
-    url: z.string().nullable(),
+    key: z.string().nullable(),
   }),
   firstName: z.string(),
   lastName: z.string(),
@@ -35,7 +35,7 @@ export default function EditProfileForm() {
       firstName: user?.firstName,
       username: user?.username,
       avatar: {
-        url: user?.avatarUrl,
+        key: user?.avatarKey ?? null,
       },
     },
     resolver: zodResolver(formSchema),
@@ -52,13 +52,24 @@ export default function EditProfileForm() {
       username: user.username ?? "",
       avatar: {
         file: null,
-        url: user.avatarUrl ?? null,
+        key: user.avatarKey ?? null,
       },
     });
   }, [user, reset]);
 
   const { field } = useController({ control, name: "avatar" });
   const avatarRef = useRef<HTMLInputElement>(null);
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!field.value.file) {
+      setFilePreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(field.value.file);
+    setFilePreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [field.value.file]);
 
   const [isPending, setIsPending] = useState<boolean>(false);
 
@@ -82,8 +93,8 @@ export default function EditProfileForm() {
     else if (user?.avatarKey) await deleteFile([user.avatarKey]);
 
     await mutateAsync({
-      ...(avatar?.url && avatar.key
-        ? { avatar: { url: avatar?.url, key: avatar?.key } }
+      ...(avatar?.key
+        ? { avatar: { key: avatar.key } }
         : { avatar: null }),
       firstName: data.firstName,
       lastName: data.lastName,
@@ -103,7 +114,7 @@ export default function EditProfileForm() {
         </span>
         <div className="flex w-full justify-between gap-2">
           <Avatar className="size-[80px] rounded-2xl">
-            <AvatarImage src={field.value.url ?? undefined} />
+            <AvatarImage src={filePreviewUrl ?? (field.value.key ? `/api/files?key=${field.value.key}` : undefined)} />
             <AvatarFallback className="rounded-2xl">
               {
                 // eslint-disable-next-line
@@ -122,7 +133,7 @@ export default function EditProfileForm() {
 
                 field.onChange({
                   file: e.target.files[0] ?? null,
-                  url: URL.createObjectURL(e.target.files[0]),
+                  key: null,
                 });
               }}
             />
@@ -130,7 +141,7 @@ export default function EditProfileForm() {
               type="button"
               variant="ghost"
               className="text-destructive hover:text-destructive hover:bg-destructive-foreground font-semibold"
-              onClick={() => field.onChange({ file: null, url: null })}
+              onClick={() => field.onChange({ file: null, key: null })}
             >
               إزالة
             </Button>
