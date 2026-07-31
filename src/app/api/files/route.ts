@@ -4,7 +4,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Upload } from "@aws-sdk/lib-storage";
 import pLimit from "p-limit";
 import { env } from "@/env";
-import { r2 } from "@/server/r2";
+import { r2, r2Public } from "@/server/r2";
 
 const CONCURRENCY_LIMIT = 5;
 const QUEUE_SIZE = 10; // parts uploaded in parallel per file
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const signedUrl = await getSignedUrl(
-      r2,
+      r2Public,
       new GetObjectCommand({
         Bucket: env.OBJECT_STORAGE_BUCKET_NAME,
         Key: key,
