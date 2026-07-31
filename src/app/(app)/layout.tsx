@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import MainContentLayout from "@/components/main-content-layout";
 import { ModeToggle } from "@/components/mode-toggle";
