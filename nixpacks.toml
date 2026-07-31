@@ -5,12 +5,11 @@ nixPkgs = ["nodejs_22"]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["SKIP_ENV_VALIDATION=1 npm run build"]
 dependsOn = ["install"]
 
 [start]
 cmd = "npm start"
 
 [variables]
-SKIP_ENV_VALIDATION = "1"
 NODE_ENV = "production"

@@ -105,6 +105,13 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      if (!user.passwordHash) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "بيانات تسجيل الدخول خاطئة",
+        });
+      }
+
       const ok = await bcrypt.compare(password, user.passwordHash);
       if (!ok) {
         throw new TRPCError({
@@ -267,6 +274,13 @@ export const authRouter = createTRPCRouter({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "تأكد بأنك مسجل في النظام",
+        });
+      }
+
+      if (!user.passwordHash) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "كلمة المرور الحالية غير صحيحة",
         });
       }
 
